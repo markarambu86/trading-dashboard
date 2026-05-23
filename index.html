@@ -3,85 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMC AI LIVE TRADING DASHBOARD PRO</title>
+    <title>SMC AI QUANT PRO V7 - Complete Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <style>
-        body { background: #020617; font-family: 'Segoe UI', system-ui, sans-serif; }
-        .symbol-btn.active { background: #059669 !important; box-shadow: 0 0 15px rgba(16,185,129,0.4); }
-        .card { background: linear-gradient(145deg, #0f172a, #1e293b); border: 1px solid #334155; }
-        .glow { box-shadow: 0 0 25px rgba(16,185,129,0.1); }
+        body { background: #030712; font-family: 'Segoe UI', system-ui, sans-serif; }
+        .symbol-btn { transition: all 0.2s ease; }
+        .symbol-btn.active { background: #059669 !important; box-shadow: 0 0 25px rgba(16,185,129,0.5); transform: scale(1.02); }
+        .card { background: linear-gradient(145deg, #0f172a, #1e293b); border: 1px solid #1e293b; }
+        .glow { box-shadow: 0 0 35px rgba(16,185,129,0.12); }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #1e293b; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     </style>
 </head>
-<body class="text-white min-h-screen">
-    <div class="max-w-7xl mx-auto p-4">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+<body class="text-white min-h-screen overflow-x-hidden">
+    <div class="max-w-[1800px] mx-auto p-3">
+        <!-- HEADER -->
+        <div class="flex flex-col lg:flex-row justify-between items-center mb-5 gap-3">
             <div>
-                <h1 class="text-3xl font-black text-emerald-400 tracking-tight">
-                    <i class="fas fa-robot mr-2"></i>SMC AI QUANT TRADING DASHBOARD
+                <h1 class="text-2xl lg:text-3xl font-black text-emerald-400 tracking-tight">
+                    <i class="fas fa-brain mr-2"></i>SMC AI QUANT PRO <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded ml-2">V7</span>
                 </h1>
-                <p class="text-gray-400 text-sm">Real-time Advanced Market Structure & Smart Money Concepts</p>
+                <p class="text-gray-500 text-xs">Advanced Smart Money Concepts • Market Structure • Order Blocks • Multi-Timeframe AI</p>
             </div>
-            <div class="flex items-center gap-3 bg-slate-800 px-4 py-2 rounded-2xl border border-slate-700">
-                <span id="priceDisplay" class="text-2xl font-mono text-emerald-400 font-bold">--</span>
-                <span id="status" class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-md font-semibold">Connecting...</span>
-            </div>
-        </div>
-
-        <div class="card rounded-2xl p-4 mb-6 glow">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="flex items-center gap-3 bg-slate-900 px-5 py-3 rounded-2xl border border-slate-800">
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Finnhub API Key</label>
-                    <input id="apiKey" type="password" placeholder="Masukkan API Key" class="bg-slate-900/50 p-2.5 rounded-xl w-full text-white text-sm border border-slate-700 focus:border-emerald-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Telegram Bot Token</label>
-                    <input id="botToken" type="password" placeholder="Bot Token" class="bg-slate-900/50 p-2.5 rounded-xl w-full text-white text-sm border border-slate-700 focus:border-emerald-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Telegram Chat ID</label>
-                    <input id="chatId" type="text" placeholder="Chat ID" class="bg-slate-900/50 p-2.5 rounded-xl w-full text-white text-sm border border-slate-700 focus:border-emerald-500 outline-none">
-                </div>
-            </div>
-            <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-700/50">
-                <div class="flex items-center gap-2 text-sm text-gray-300">
-                    <input id="enableTelegram" type="checkbox" checked class="w-4 h-4 accent-emerald-500">
-                    <label for="enableTelegram">Kirim alert via Telegram</label>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-500 px-6 py-1.5 rounded-xl text-xs font-semibold transition">Save Settings</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="flex flex-wrap gap-2 mb-6">
-            <button onclick="changeSymbol('EURUSD',this)" class="symbol-btn active px-5 py-2.5 bg-slate-800 rounded-xl text-sm font-bold">EUR/USD</button>
-            <button onclick="changeSymbol('GBPUSD',this)" class="symbol-btn px-5 py-2.5 bg-slate-800 rounded-xl text-sm font-bold">GBP/USD</button>
-            <button onclick="changeSymbol('USDJPY',this)" class="symbol-btn px-5 py-2.5 bg-slate-800 rounded-xl text-sm font-bold">USD/JPY</button>
-            <button onclick="changeSymbol('XAUUSD',this)" class="symbol-btn px-5 py-2.5 bg-slate-800 rounded-xl text-sm font-bold">XAU/USD</button>
-            <button onclick="changeSymbol('BTCUSD',this)" class="symbol-btn px-5 py-2.5 bg-slate-800 rounded-xl text-sm font-bold">BTC/USD</button>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 card rounded-3xl p-4 glow flex flex-col justify-between">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 id="chartTitle" class="font-bold text-lg text-slate-300">Live Candlestick Feed (H1 Base Generated)</h3>
-                    <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">Real-Time Tick Engine</span>
-                </div>
-                <div id="chart" class="w-full h-[430px] rounded-2xl overflow-hidden bg-slate-950"></div>
-            </div>
-
-            <div class="card rounded-3xl p-5 glow">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                    <i class="fas fa-hourglass-half text-emerald-400"></i> Multi-Timeframe Forecasts
-                </h2>
-                
-                <div class="space-y-2.5 max-h-[440px] overflow-y-auto pr-1">
-                    <div class="flex justify-between items-center bg-slate-900/40 p-3 rounded-xl border border-slate-800">
-                        <div><span class="font-bold text-sm block">1 Menit (M1)</span><span class="text-xs text-gray-400" id="analysis-1m">Calculating...</span></div>
-                        <span id="tf-1m" class="px-3 py-1 rounded-lg text-xs font-black bg-slate-800 text-gray-400">WAIT</span>
+                    <div id="priceDisplay" class="text-3xl font-mono text-emerald-400 font-bold">--</div>
+                    <div class="flex gap-3 text-[10px] text-gray-500 mt-1">
+                        <span>Spread: <span id="spread" class="text-white">--</span></span>
+                        <span>•</span>
+                        <span>Change: <span id="priceChange" class="text-white">--</span></span>
                     </div>
-                    <div class="flex justify-between items-center bg-slate-900/40 p-3 rounded-xl border border-slate-800">
-                        <div><span class="font-bold text-sm block">5 Menit (M5)</span><span class="text-xs text-gray-400" id="analysis-5m">Calculating...</span></div>
-                        <span id="tf-5m" class="px-3 py-1 rounded-lg text-xs font-black bg-slate-800 text-
+                </div>
+                <div class="w-px h-12 bg-slate-700"></div>
+                <div>
+                    <span id="status" class="text-xs bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-lg font-bold pulse">CONNECTING...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS PANEL -->
+        <div class="card rounded-2xl p-4 mb-5 glow">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1"><i class="fas fa-key mr-1"></i>Finnhub API Key</label>
+                    <input id="apiKey" type="password" placeholder="Masukkan Finnhub API Key" class="bg-slate-950 p-3 rounded-xl w-full text-white text-sm border border-slate-800 focus:border-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1"><i class="fab fa-telegram mr-1"></i>Telegram Bot Token</label>
+                    <input id="botToken" type="password" placeholder="Bot Token" class="bg-slate-950 p-3 rounded-xl w-full text-white text-sm border border-slate-800 focus:border-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1"><i class="fab fa-telegram-plane mr-1"></i>Telegram Chat ID</label>
+                    <input id="chatId" type="text" placeholder="Chat ID" class="bg-slate-950 p-3 rounded-xl w-full text-white text-sm border border-slate-800 focus:border-emerald-500 outline-none">
+                </div>
+                <div class="flex flex-col justify-between">
+                    <div class="flex items-center gap-2 text-sm">
+                        <input id="enableTelegram" type="checkbox" checked class="w-4 h-4 accent-emerald-500">
+                        <label for="enableTelegram" class="text-gray-400">Telegram Alert</label>
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-xl text-sm font-bold flex-1">💾 SAVE</button>
+                        <button onclick="testTelegram()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-sm font-bold flex-1">📨 TEST</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SYMBOL SELECTOR -->
+        <div class="flex flex-wrap gap-2 mb-5">
+            <button onclick="changeSymbol('EURUSD',this)" class="symbol-btn active px-6 py-3 bg-slate-800 rounded-xl text-sm font-bold border border-slate-700">🇪🇺 EUR/USD</button>
+            <button onclick="changeSymbol('GBPUSD',this)" class="symbol-btn px-6 py-3 bg-slate-800 rounded-xl text-sm font-bold border border-slate-700">🇬🇧 GBP/USD</button>
+            <button onclick="changeSymbol('USDJPY',this)" class="symbol-btn px-6 py-3 bg-slate-800 rounded-xl text-sm font-bold border border-slate-700">🇯🇵 USD/JPY</button>
+            <button onclick="changeSymbol('XAUUSD',this)" class="symbol-btn px-6 py-3 bg-slate-800 rounded-xl text-sm font-bold border border-slate-700">🥇 XAU/USD</button>
+            <button onclick="changeSymbol('BTCUSD',this)" class="symbol-btn px-6 py-3 bg-slate-800 rounded-xl text-sm font-bold border border-slate-700">₿ BTC/USD</button>
+        </div>
+
+        <!-- MAIN CONTENT GRID -->
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-5">
+            <!-- LEFT 3 COLS -->
+            <div class="xl:col-span-3 space-y-5">
+                <!-- CANDLESTICK CHART -->
+                <div class="card rounded-3xl p-5 glow">
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4 gap-3">
+                        <div>
+                            <h3 id="chartTitle" class="font-bold text-xl text-white">EUR/USD <span class="text-emerald-400">• Candlestick Chart</span></h3>
+                            <p class="text-xs text-gray-500">Real-time H1 • Smart Money Analysis Active</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-800">
+                                <span class="text-xs text-gray-500">O</span>
+                                <span id="ohlc-open" class="text-sm text-white font-mono ml-1">--</span>
+                            </div>
+                            <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-800">
+                                <span class="text-xs text-gray-500">H</span>
+                                <span id="ohlc-high" class="text-sm text-emerald-400 font-mono ml-1">--</span>
+                            </div>
+                            <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-800">
+                                <span class="text-xs text-gray-500">L</span>
+                                <span id="ohlc-low" class="text-sm text-red-400 font-mono ml-1">--</span>
+                            </div>
+                            <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-800">
+                                <span class="text-xs text-gray-500">C</span>
+                                <span id="ohlc-close" class="text-sm text-white font-mono ml-1">--</span>
+                            </div>
+                            <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-800">
+                                <span class="text-xs text-gray-500">Vol</span>
+                                <span id="ohlc-volume" class="text-sm text-blue-400 font-mono ml-1">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="chart" class="w-full h-[450px] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800"></div>
+                </div>
+
+                <!-- TECHNICAL INDICATORS -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    <div class="card rounded-2xl p-3">
+                        <div class="text-xs text-gray-500 mb-1">RSI (14)</div>
+                        <div id="ind-rsi" class="text-2xl font-bold text-gray-400">--</div>
+                        <div id="ind-rsi-state" class="text-[10px] text-gray-500">Neutral</div>
+                    </div>
+                    <div class="card rounded-2xl p-3">
+                        <div class="text-xs text-gray-500 mb-1">MACD</div>
+                        <div id="ind-macd" class="text-xl font-bold text-gray-400">--</div>
+                        <div id="ind-macd-state" class="text-[10px] text-gray-500">Neutral</div>
+                    </div>
+                    <div class="card rounded-2xl p-3">
+                        <div class="text-xs text-gray-500 mb-1">EMA 9/21</div>
+                        <div id="ind-ema" class="text-xl font-bold text-gray-400">--</div>
+                        <div id="ind-ema-state" class="text-[10px] text-gray-500">Neutral</div>
+                    </div>
+                    <div class="card rounded-2xl p-3">
+                        <div class="text-xs text-gray-500 mb-1">ATR (14)</div>
+                        <div id="ind-atr" class="text-xl font-bold text-gray-400">--</div>
+                        <div id="ind-atr-state" class="text-[10px] text-gray-500">Volatility</div>
+                    </div>
+                    <div class="card rounded-2xl p-3">
+                        <div class="text-xs text-gray-500 mb-1">Relative Vol</div>
+                        <div id="ind-volume" class="text-xl font-bold text-gray-400">--</div>
+                        <div id="ind-volume-state" class="text-[10px] text-gray-500">Avg</div>
+                    </div>
+                </div>
+
+                <!-- SMC ANALYSIS DASHBOARD -->
+                <div class="card rounded-3xl p-5 glow">
+                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-layer-group text-emerald-400"></i> SMC Analysis Dashboard
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- MARKET STRUCTURE -->
+                        <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800">
+                            <div class="text-xs text-emerald-400 uppercase font-bold mb-3">🏗️ Market Structure</div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between"><span class="text-gray-500">Structure:</span><span id="ms-structure" class="font-bold">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-500">Trend Bias:</span><span id="ms-trend" class="font-bold">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-500">MSS:</span><span id="ms-mss" class="font-bold">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-500">Swing HL:</span><span id="ms-swing" class="font-mono text-xs">--</span></div>
+                            </div>
+                        </div>
+                        <!-- SUPPLY & DEMAND -->
+                        <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800">
+                            <div class="text-xs text-blue-400 uppercase font-bold mb-3">📦 Supply & Demand</div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between"><span class="text-gray-500">Supply Zone:</span><span id="ob-supply" class="font-mono font-bold text-red-400">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-500">Demand Zone:</span><span id="ob-demand" class="font-mono font-bold text-emerald-400">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-500">Valid OB:</span><span id="ob-valid" class="font-bold">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-500">Last Touch:</span><span id="ob-last" class="font-bold">--</span></div>
+                            </div>
+                        </div>
+                        <!-- LIQUIDITY & FVG -->
+                        <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800">
+                            <div class="text-xs text-purple-400 uppercase font-bold mb-3">💧 Liquidity & FVG</div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between"><span class="text-gray-500">FVG Status:</span><span id="liq-fvg" class="font-bold">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-500">FVG Range:</span><span id="liq-fvg-range" class="font-mono text-xs">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-500">Rel Volume:</span><span id="liq-relvol" class="font-bold">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-500">S/D Ratio:</span><span id="liq-sdratio" class="font-bold">--</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEWS & SENTIMENT -->
+                <div
