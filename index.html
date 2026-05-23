@@ -87,6 +87,47 @@
 
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-5">
             <div class="xl:col-span-3 space-y-5">
+                
+                <div class="card rounded-3xl p-5 glow border-t-4 border-l-4 border-emerald-500/30">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-3 mb-4 gap-2">
+                        <div>
+                            <h2 class="text-lg font-black flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r browser-default from-emerald-400 to-blue-400">
+                                <i class="fas fa-robot"></i> AI CONFLUENCE SIGNAL STATION
+                            </h2>
+                            <p class="text-[11px] text-gray-500">Real-time compilation of Market Structure, FVG Liquidity, and Order Blocks Matrix</p>
+                        </div>
+                        <div class="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 flex items-center gap-2">
+                            <span class="text-[10px] text-gray-400 font-bold uppercase">Confluence Score:</span>
+                            <span id="signalScore" class="text-sm font-mono font-black text-gray-400">0%</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div id="signalContainer" class="bg-slate-950 rounded-2xl p-5 flex flex-col justify-center items-center text-center border border-slate-800 transition-all duration-300">
+                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">AI Executive Decision</span>
+                            <div id="signalAction" class="text-3xl font-black tracking-widest text-gray-500">MONITORING</div>
+                            <span id="signalReason" class="text-[10px] text-gray-500 mt-2 italic">Gathering market matrix data...</span>
+                        </div>
+                        <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800 flex flex-col justify-between">
+                            <span class="text-[11px] text-blue-400 font-bold uppercase block mb-2">🎯 Automated Risk Setup</span>
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between"><span class="text-gray-500">Suggested Action:</span><span id="param-action" class="font-bold">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-500">Entry Zone (Now):</span><span id="param-entry" class="font-mono text-white">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-500">Invalidation (SL):</span><span id="param-sl" class="font-mono text-red-400 font-bold">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-500">Target Pool (TP):</span><span id="param-tp" class="font-mono text-emerald-400 font-bold">--</span></div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800">
+                            <span class="text-[11px] text-purple-400 font-bold uppercase block mb-2">⚙️ Engine Confluence Matrix</span>
+                            <div class="space-y-1.5 text-xs">
+                                <div class="flex justify-between items-center"><span class="text-gray-500">1. Market Expansion Bias:</span><span id="chk-structure" class="text-gray-400 font-bold">❌ Neutral</span></div>
+                                <div class="flex justify-between items-center"><span class="text-gray-500">2. FVG Imbalance Pool:</span><span id="chk-fvg" class="text-gray-400 font-bold">❌ Filled</span></div>
+                                <div class="flex justify-between items-center"><span class="text-gray-500">3. Order Block Safety:</span><span id="chk-ob" class="text-gray-400 font-bold">❌ Untested</span></div>
+                                <div class="flex justify-between items-center"><span class="text-gray-500">4. Vol Velocity Check:</span><span id="chk-vol" class="text-gray-400 font-bold">❌ Low-Vol</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card rounded-3xl p-5 glow">
                     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4 gap-3">
                         <div>
@@ -407,16 +448,19 @@
             const relVol = (c0.volume / (avgVol || 1)).toFixed(2);
             document.getElementById("liq-relvol").textContent = `${relVol}x`;
 
+            // FVG ENGINE
             let fvgState = "Balanced Zone"; let fvgRangeText = "--";
             if (c3.high < c1.low) { fvgState = "Bullish Imbalance"; fvgRangeText = `${c3.high.toFixed(digits)} - ${c1.low.toFixed(digits)}`; document.getElementById("liq-fvg").className = "font-bold text-emerald-400"; }
             else if (c3.low > c1.high) { fvgState = "Bearish Imbalance"; fvgRangeText = `${c1.high.toFixed(digits)} - ${c3.low.toFixed(digits)}`; document.getElementById("liq-fvg").className = "font-bold text-red-400"; }
             else { document.getElementById("liq-fvg").className = "font-bold text-gray-400"; }
             document.getElementById("liq-fvg").textContent = fvgState; document.getElementById("liq-fvg-range").textContent = fvgRangeText;
 
+            // ORDER BLOCK ENGINE
             let highSwing = Math.max(c1.high, c2.high, c3.high); let lowSwing = Math.min(c1.low, c2.low, c3.low);
             document.getElementById("ob-supply").textContent = highSwing.toFixed(digits); document.getElementById("ob-demand").textContent = lowSwing.toFixed(digits);
             document.getElementById("ms-swing").textContent = `${lowSwing.toFixed(digits)} / ${highSwing.toFixed(digits)}`;
 
+            // MARKET STRUCTURE ENGINE
             let structure = "Consolidating"; let mss = "No Break"; let bias = "Neutral";
             if (c0.close > highSwing) { structure = "Bullish Expansion"; mss = "MSS Bullish (CHoCH)"; bias = "Institutional Long"; document.getElementById("ms-structure").className = "font-bold text-emerald-400"; }
             else if (c0.close < lowSwing) { structure = "Bearish Expansion"; mss = "MSS Bearish (CHoCH)"; bias = "Institutional Short"; document.getElementById("ms-structure").className = "font-bold text-red-400"; }
@@ -424,7 +468,95 @@
             document.getElementById("ms-structure").textContent = structure; document.getElementById("ms-mss").textContent = mss; document.getElementById("ms-trend").textContent = bias;
             document.getElementById("ob-valid").textContent = "Yes (Verified)"; document.getElementById("ob-last").textContent = new Date().toLocaleTimeString();
 
+            // RENDER CONFLUENCE LOGIC TO THE MAIN STATION
+            compileMasterConfluenceSignal(structure, fvgState, c0.close, highSwing, lowSwing, parseFloat(relVol));
+
             executeMultiTimeframeForecast(structure, fvgState, c0.close, highSwing, lowSwing);
+        }
+
+        // LOGIC PENYATUAN SIGNAL BUY / SELL DARI SEMUA ANALISA
+        function compileMasterConfluenceSignal(structure, fvg, currentPrice, highOB, lowOB, volumeRatio) {
+            let score = 0;
+            let buyFactors = 0;
+            let sellFactors = 0;
+            const digits = currentSymbol.includes("BTC") ? 2 : 5;
+
+            // 1. Cek Market Structure Expansion
+            if (structure.includes("Bullish")) { buyFactors++; document.getElementById("chk-structure").innerHTML = "🟢 Bullish Bias"; document.getElementById("chk-structure").className = "text-emerald-400 font-bold"; }
+            else if (structure.includes("Bearish")) { sellFactors++; document.getElementById("chk-structure").innerHTML = "🔴 Bearish Bias"; document.getElementById("chk-structure").className = "text-red-400 font-bold"; }
+            else { document.getElementById("chk-structure").innerHTML = "⚪ Consolidate"; document.getElementById("chk-structure").className = "text-gray-400 font-bold"; }
+
+            // 2. Cek FVG Imbalance Pool
+            if (fvg.includes("Bullish")) { buyFactors++; document.getElementById("chk-fvg").innerHTML = "🟢 Bullish FVG"; document.getElementById("chk-fvg").className = "text-emerald-400 font-bold"; }
+            else if (fvg.includes("Bearish")) { sellFactors++; document.getElementById("chk-fvg").innerHTML = "🔴 Bearish FVG"; document.getElementById("chk-fvg").className = "text-red-400 font-bold"; }
+            else { document.getElementById("chk-fvg").innerHTML = "⚪ Balanced"; document.getElementById("chk-fvg").className = "text-gray-400 font-bold"; }
+
+            // 3. Cek Kedekatan Harga dengan Order Block (Mitigation)
+            const rangeOB = highOB - lowOB;
+            const proximityToDemand = (currentPrice - lowOB) / (rangeOB || 1);
+            if (proximityToDemand <= 0.3) { buyFactors++; document.getElementById("chk-ob").innerHTML = "🟢 Demand Rest"; document.getElementById("chk-ob").className = "text-emerald-400 font-bold"; }
+            else if (proximityToDemand >= 0.7) { sellFactors++; document.getElementById("chk-ob").innerHTML = "🔴 Supply Rest"; document.getElementById("chk-ob").className = "text-red-400 font-bold"; }
+            else { document.getElementById("chk-ob").innerHTML = "⚪ Equilibrium"; document.getElementById("chk-ob").className = "text-gray-400 font-bold"; }
+
+            // 4. Cek Lonjakan Volume Institusi
+            if (volumeRatio >= 1.2) { 
+                if (structure.includes("Bullish") || fvg.includes("Bullish")) buyFactors++;
+                if (structure.includes("Bearish") || fvg.includes("Bearish")) sellFactors++;
+                document.getElementById("chk-vol").innerHTML = "🔥 High Volume"; document.getElementById("chk-vol").className = "text-blue-400 font-bold"; 
+            } else { 
+                document.getElementById("chk-vol").innerHTML = "⚪ Low Volume"; document.getElementById("chk-vol").className = "text-gray-500 font-bold"; 
+            }
+
+            // Hitung Score Akhir Kesimpulan Sinyal
+            const totalSignals = buyFactors + sellFactors;
+            let finalDecision = "WAIT";
+            let containerStyle = "border border-slate-800 bg-slate-950";
+            let actionStyle = "text-gray-500";
+            let reasonText = "Menunggu konformasi korelasi indikator...";
+
+            if (buyFactors >= 2 && buyFactors > sellFactors) {
+                score = Math.floor((buyFactors / 4) * 100);
+                finalDecision = "STRONG BUY";
+                containerStyle = "border-2 border-emerald-500 bg-emerald-950/30 shadow-[0_0_20px_rgba(16,185,129,0.2)]";
+                actionStyle = "text-emerald-400 font-black animate-pulse";
+                reasonText = "Struktur & FVG mendukung akumulasi institusional.";
+
+                // Kalkulasi SL dan TP Otomatis untuk Posisi Buy
+                document.getElementById("param-action").textContent = "LONG ENTRY";
+                document.getElementById("param-action").className = "text-emerald-400 font-bold";
+                document.getElementById("param-entry").textContent = currentPrice.toFixed(digits);
+                document.getElementById("param-sl").textContent = (lowOB - (rangeOB * 0.1)).toFixed(digits); // SL di bawah Demand OB
+                document.getElementById("param-tp").textContent = (highOB + (rangeOB * 1.5)).toFixed(digits); // TP 1:1.5 RR minimal
+            } 
+            else if (sellFactors >= 2 && sellFactors > buyFactors) {
+                score = Math.floor((sellFactors / 4) * 100);
+                finalDecision = "STRONG SELL";
+                containerStyle = "border-2 border-red-500 bg-red-950/30 shadow-[0_0_20px_rgba(239,68,68,0.2)]";
+                actionStyle = "text-red-400 font-black animate-pulse";
+                reasonText = "Struktur & FVG mendukung distribusi institusional.";
+
+                // Kalkulasi SL dan TP Otomatis untuk Posisi Sell
+                document.getElementById("param-action").textContent = "SHORT ENTRY";
+                document.getElementById("param-action").className = "text-red-400 font-bold";
+                document.getElementById("param-entry").textContent = currentPrice.toFixed(digits);
+                document.getElementById("param-sl").textContent = (highOB + (rangeOB * 0.1)).toFixed(digits); // SL di atas Supply OB
+                document.getElementById("param-tp").textContent = (lowOB - (rangeOB * 1.5)).toFixed(digits);
+            } 
+            else {
+                score = 0;
+                document.getElementById("param-action").textContent = "STANDBY";
+                document.getElementById("param-action").className = "text-gray-500 font-bold";
+                document.getElementById("param-entry").textContent = "--";
+                document.getElementById("param-sl").textContent = "--";
+                document.getElementById("param-tp").textContent = "--";
+            }
+
+            // Update Tampilan DOM Visual Box Sinyal Utama
+            document.getElementById("signalScore").textContent = `${score}%`;
+            document.getElementById("signalAction").textContent = finalDecision;
+            document.getElementById("signalAction").className = `text-3xl font-black tracking-widest ${actionStyle}`;
+            document.getElementById("signalContainer").className = `rounded-2xl p-5 flex flex-col justify-center items-center text-center transition-all duration-300 ${containerStyle}`;
+            document.getElementById("signalReason").textContent = reasonText;
         }
 
         function executeMultiTimeframeForecast(structure, fvg, closePrice, high, low) {
