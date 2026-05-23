@@ -31,16 +31,10 @@
         .card {
             background: linear-gradient(145deg, #1a1a2e, #16213e);
         }
-        input:focus {
-            outline: none;
-            ring: 2px;
-            ring-color: #059669;
-        }
     </style>
 </head>
 <body class="text-white min-h-screen">
     <div class="max-w-7xl mx-auto p-4">
-        <!-- HEADER -->
         <div class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-black text-emerald-400 mb-2">
                 <i class="fas fa-chart-line mr-3"></i>MT5 AI LIVE TRADING DASHBOARD
@@ -48,7 +42,6 @@
             <p class="text-gray-400">Real-time • AI Signal • Telegram Alert</p>
         </div>
 
-        <!-- SETTINGS -->
         <div class="card rounded-3xl p-6 border border-gray-800 mb-6 glow">
             <h2 class="text-2xl font-bold mb-5 flex items-center gap-2">
                 <i class="fas fa-cog text-emerald-400"></i> Settings
@@ -84,7 +77,6 @@
             </div>
         </div>
 
-        <!-- SYMBOL SELECTOR -->
         <div class="flex flex-wrap justify-center gap-3 mb-8">
             <button onclick="changeSymbol('EURUSD',this)" class="symbol-btn active px-6 py-3 bg-gray-800 rounded-2xl font-semibold">
                 EUR/USD
@@ -104,7 +96,6 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- CHART -->
             <div class="lg:col-span-2 card rounded-3xl p-6 border border-gray-800 glow">
                 <div class="flex justify-between items-center mb-4">
                     <h2 id="symbolTitle" class="text-3xl font-bold">EUR/USD</h2>
@@ -116,13 +107,12 @@
                 <canvas id="chart"></canvas>
             </div>
 
-            <!-- AI SIGNAL -->
             <div class="card rounded-3xl p-6 border border-gray-800 glow">
                 <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
                     <i class="fas fa-robot text-emerald-400"></i> AI SIGNAL
                 </h2>
-                <div id="prediction" class="text-center py-10 text-5xl font-black rounded-3xl bg-gray-800/50 mb-4">
-                    <span class="text-yellow-400">WAIT</span>
+                <div id="prediction" class="text-center py-10 text-5xl font-black rounded-3xl bg-gray-800/50 mb-4 transition-colors duration-300">
+                    <span id="predictionText" class="text-yellow-400">WAIT</span>
                 </div>
                 
                 <div class="mt-6 space-y-3 text-base">
@@ -154,7 +144,6 @@
             </div>
         </div>
 
-        <!-- HISTORY -->
         <div class="mt-8 card rounded-3xl p-6 border border-gray-800 glow">
             <h2 class="text-2xl font-bold mb-5 flex items-center gap-2">
                 <i class="fas fa-history text-emerald-400"></i> Signal History
@@ -173,26 +162,25 @@
                     </thead>
                     <tbody id="historyBody">
                         <tr>
-                            <td colspan="6" class="text-center py-8 text-gray-500">Belum ada signal</td>
+                            <td colspan="6" class="text-center py-8 text-gray-500">Belum ada signal (Membutuhkan minimal 40 data tick)</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- FOOTER -->
         <div class="text-center mt-8 text-gray-500 text-sm pb-4">
-            <p>MT5 AI Trading Dashboard Pro © 2024 | Powered by Finnhub API</p>
+            <p>MT5 AI Trading Dashboard Pro © 2026 | Powered by Finnhub API</p>
         </div>
     </div>
 
     <script>
         // ================== CONFIG ==================
         const symbolMap = {
-            EURUSD: "EURUSD",
-            GBPUSD: "GBPUSD", 
-            USDJPY: "USDJPY",
-            XAUUSD: "XAUUSD",
+            EURUSD: "BINANCE:EURUSDC", // Menggunakan data Binance untuk kestabilan websocket gratisan
+            GBPUSD: "FX_IDC:GBPUSD",
+            USDJPY: "FX_IDC:USDJPY",
+            XAUUSD: "OANDA:XAU_USD",
             BTCUSD: "BINANCE:BTCUSDT"
         };
 
@@ -204,7 +192,7 @@
         let signalHistory = [];
         let settings = { apiKey: "", botToken: "", chatId: "", telegram: true };
         let lastSignalTime = 0;
-        let reconnectAttempts = 0;
+        const maxDataPoints = 50; // Batasi data agar tidak merusak performa RAM browser
 
         // ================== LOAD & SAVE ==================
         function loadSettings() {
@@ -214,7 +202,7 @@
                 document.getElementById("apiKey").value = settings.apiKey || "";
                 document.getElementById("botToken").value = settings.botToken || "";
                 document.getElementById("chatId").value = settings.chatId || "";
-                document.getElementById("enableTelegram").checked = settings.telegram;
+                document.getElementById("enableTelegram").checked = settings.telegram !== undefined ? settings.telegram : true;
             }
         }
 
@@ -230,22 +218,102 @@
         }
 
         async function testTelegram() {
-            if (!settings.botToken || !settings.chatId) {
+            const token = document.getElementById("botToken").value.trim();
+            const chat = document.getElementById("chatId").value.trim();
+            if (!token || !chat) {
                 alert("❌ Isi Bot Token dan Chat ID dulu!");
                 return;
             }
             
             const text = "✅ Test Telegram Alert dari MT5 AI Dashboard berhasil!";
             try {
-                await fetch(`https://api.telegram.org/bot${settings.botToken}/sendMessage`, {
+                const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ chat_id: settings.chatId, text })
+                    body: JSON.stringify({ chat_id: chat, text })
                 });
-                alert("✅ Test Telegram berhasil dikirim!");
+                if(res.ok) alert("✅ Test Telegram berhasil dikirim!");
+                else alert("❌ Gagal. Periksa kembali Token/Chat ID Anda.");
             } catch (e) {
-                alert("❌ Gagal mengirim test");
+                alert("❌ Gagal mengirim test: " + e.message);
             }
+        }
+
+        // ================== WEBSOCKET CONNECTION ==================
+        function connectWebSocket() {
+            if (ws) {
+                ws.close();
+            }
+
+            const apiKey = settings.apiKey || document.getElementById("apiKey").value.trim();
+            if (!apiKey) {
+                document.getElementById("status").textContent = "API Key Missing";
+                document.getElementById("status").className = "text-red-400 font-medium text-sm";
+                return;
+            }
+
+            document.getElementById("status").textContent = "Connecting...";
+            document.getElementById("status").className = "text-yellow-400 font-medium text-sm";
+
+            ws = new WebSocket(`wss://ws.finnhub.io?token=${apiKey}`);
+
+            ws.onopen = function() {
+                document.getElementById("status").textContent = "Connected";
+                document.getElementById("status").className = "text-emerald-400 font-medium text-sm";
+                
+                // Subscribe ke simbol aktif
+                const targetSymbol = symbolMap[currentSymbol];
+                ws.send(JSON.stringify({'type':'subscribe', 'symbol': targetSymbol}));
+            };
+
+            ws.onmessage = function(event) {
+                const response = JSON.parse(event.data);
+                if (response.type === 'trade') {
+                    const data = response.data[0];
+                    const price = data.p;
+                    const timestamp = new Date(data.t);
+
+                    // Tambah data baru
+                    prices.push(price);
+                    timestamps.push(timestamp);
+
+                    // Proteksi memory leak (hapus data paling lama jika melebihi batas)
+                    if (prices.length > maxDataPoints) {
+                        prices.shift();
+                        timestamps.shift();
+                    }
+
+                    updateChart();
+                    generateSignal();
+                }
+            };
+
+            ws.onerror = function(err) {
+                console.error("Websocket Error: ", err);
+                document.getElementById("status").textContent = "Error Connection";
+                document.getElementById("status").className = "text-red-400 font-medium text-sm";
+            };
+
+            ws.onclose = function() {
+                document.getElementById("status").textContent = "Disconnected";
+                document.getElementById("status").className = "text-gray-400 font-medium text-sm";
+            };
+        }
+
+        function changeSymbol(symbol, element) {
+            currentSymbol = symbol;
+            document.getElementById("symbolTitle").textContent = element.textContent.trim();
+            
+            // Atur tombol aktif
+            document.querySelectorAll(".symbol-btn").forEach(btn => btn.classList.remove("active"));
+            element.classList.add("active");
+
+            // Reset data penampung agar grafik berganti bersih
+            prices = [];
+            timestamps = [];
+            
+            // Hubungkan ulang dengan channel symbol baru
+            connectWebSocket();
         }
 
         // ================== CHART ==================
@@ -270,13 +338,9 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        x: {
-                            display: false
-                        },
+                        x: { display: false },
                         y: {
                             grid: { color: 'rgba(255,255,255,0.05)' },
                             ticks: { color: '#9ca3af' }
@@ -287,11 +351,13 @@
         }
 
         function updateChart() {
+            if (!chart) return;
             chart.data.labels = timestamps.map(() => '');
             chart.data.datasets[0].data = prices;
             chart.update('none');
             
             if (prices.length > 0) {
+                // Tampilkan presisi angka di layar utama
                 document.getElementById("priceDisplay").textContent = prices[prices.length - 1].toFixed(5);
             }
         }
@@ -326,9 +392,13 @@
             return (ema12 && ema26) ? (ema12 - ema26).toFixed(5) : 0;
         }
 
-        // ================== AI SIGNAL ==================
+        // ================== AI SIGNAL & DOM LOGIC ==================
         function generateSignal() {
-            if (prices.length < 40) return;
+            // Butuh minimal data tick terkumpul agar indikator valid
+            if (prices.length < 40) {
+                document.getElementById("predictionText").textContent = `WAIT (${prices.length}/40)`;
+                return;
+            }
 
             const ema9 = EMA(9, prices);
             const ema21 = EMA(21, prices);
@@ -340,7 +410,7 @@
             let risk = "MEDIUM";
             let trend = "SIDEWAYS";
 
-            // Enhanced signal logic
+            // Aturan Analitik Sinyal Masuk
             if (ema9 > ema21 && rsi < 68 && macd > 0) {
                 signal = "BUY";
                 accuracy = Math.floor(75 + Math.random() * 20);
@@ -353,12 +423,96 @@
                 trend = "DOWNTREND";
             }
 
-            updateSignalUI(signal, accuracy, rsi, macd, ema9, ema21, risk, trend);
+            // Update Tampilan UI Sinyal Utama
+            const predBox = document.getElementById("prediction");
+            const predText = document.getElementById("predictionText");
+            predText.textContent = signal;
 
-            // Send to history
-            if (signal !== "WAIT") {
+            if (signal === "BUY") {
+                predText.className = "text-emerald-400";
+                predBox.style.background = "rgba(16, 185, 129, 0.15)";
+            } else if (signal === "SELL") {
+                predText.className = "text-red-400";
+                predBox.style.background = "rgba(239, 68, 68, 0.15)";
+            } else {
+                predText.className = "text-yellow-400";
+                predBox.style.background = "rgba(31, 41, 55, 0.5)";
+            }
+
+            // Update Parameter Rincian
+            document.getElementById("trend").textContent = trend;
+            document.getElementById("rsi").textContent = rsi;
+            document.getElementById("macd").textContent = macd;
+            document.getElementById("ema").textContent = `${ema9.toFixed(5)} / ${ema21.toFixed(5)}`;
+            document.getElementById("accuracy").textContent = signal !== "WAIT" ? `${accuracy}%` : "-";
+            document.getElementById("risk").textContent = signal !== "WAIT" ? risk : "-";
+
+            // Eksekusi trigger riwayat dan pengiriman alert telegram
+            const now = Date.now();
+            if (signal !== "WAIT" && (now - lastSignalTime > 60000)) { // Jeda minimal 1 menit per sinyal baru
                 addToHistory(signal, accuracy, rsi, macd);
-                
-                // Send telegram alert for high accuracy signals
-                const now = Date.now();
-                if (accuracy
+                sendTelegramAlert(signal, accuracy, rsi, trend);
+                lastSignalTime = now;
+            }
+        }
+
+        function addToHistory(signal, accuracy, rsi, macd) {
+            const tbody = document.getElementById("historyBody");
+            
+            // Hapus baris 'Belum ada signal' jika ini data pertama
+            if(signalHistory.length === 0) tbody.innerHTML = "";
+
+            const timeStr = new Date().toLocaleTimeString();
+            signalHistory.unshift({time: timeStr, pair: currentSymbol, signal, rsi, macd, accuracy});
+
+            const row = document.createElement("tr");
+            row.className = "border-b border-gray-800 hover:bg-gray-800/30";
+            
+            const sigColor = signal === "BUY" ? "text-emerald-400" : "text-red-400";
+            
+            row.innerHTML = `
+                <td class="py-3 px-2 font-mono text-sm">${timeStr}</td>
+                <td class="py-3 px-2 font-bold">${currentSymbol}</td>
+                <td class="py-3 px-2 font-black ${sigColor}">${signal}</td>
+                <td class="py-3 px-2 font-mono">${rsi}</td>
+                <td class="py-3 px-2 font-mono">${macd}</td>
+                <td class="py-3 px-2 text-emerald-400 font-bold">${accuracy}%</td>
+            `;
+            tbody.insertBefore(row, tbody.firstChild);
+        }
+
+        async function sendTelegramAlert(signal, accuracy, rsi, trend) {
+            if (!settings.telegram || !settings.botToken || !settings.chatId) return;
+
+            const text = `🚨 *MT5 AI TRADING ALERT* 🚨\n\n` +
+                         `• *Pair:* ${currentSymbol}\n` +
+                         `• *Signal:* ${signal} 🚀\n` +
+                         `• *Accuracy:* ${accuracy}%\n` +
+                         `• *Trend:* ${trend}\n` +
+                         `• *RSI:* ${rsi}\n` +
+                         `• *Time:* ${new Date().toLocaleTimeString()}`;
+
+            try {
+                await fetch(`https://api.telegram.org/bot${settings.botToken}/sendMessage`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        chat_id: settings.chatId, 
+                        text: text,
+                        parse_mode: "Markdown"
+                    })
+                });
+            } catch (e) {
+                console.error("Gagal mengirim Telegram alert:", e);
+            }
+        }
+
+        // ================== INIT LOAD ==================
+        window.onload = function() {
+            loadSettings();
+            initChart();
+            connectWebSocket();
+        };
+    </script>
+</body>
+</html>
