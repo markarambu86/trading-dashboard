@@ -3,178 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MT5 AI LIVE TRADING DASHBOARD PRO</title>
+    <title>SMC AI LIVE TRADING DASHBOARD PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <style>
-        body { 
-            background: #020617; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .symbol-btn.active { 
-            background: #059669 !important; 
-            box-shadow: 0 0 15px rgba(16,185,129,0.5); 
-        }
-        .symbol-btn { transition: all 0.3s ease; }
-        .symbol-btn:hover { transform: translateY(-2px); }
-        canvas { height: 440px !important; }
-        .glow { box-shadow: 0 0 25px rgba(16,185,129,0.15); }
-        .card { background: linear-gradient(145deg, #1a1a2e, #16213e); }
+        body { background: #020617; font-family: 'Segoe UI', system-ui, sans-serif; }
+        .symbol-btn.active { background: #059669 !important; box-shadow: 0 0 15px rgba(16,185,129,0.4); }
+        .card { background: linear-gradient(145deg, #0f172a, #1e293b); border: 1px solid #334155; }
+        .glow { box-shadow: 0 0 25px rgba(16,185,129,0.1); }
     </style>
 </head>
 <body class="text-white min-h-screen">
     <div class="max-w-7xl mx-auto p-4">
-        <div class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-black text-emerald-400 mb-2">
-                <i class="fas fa-chart-line mr-3"></i>MT5 AI LIVE TRADING DASHBOARD
-            </h1>
-            <p class="text-gray-400">Real-time • Multi-Timeframe AI Analysis • Telegram Alert</p>
-        </div>
-
-        <div class="card rounded-3xl p-6 border border-gray-800 mb-6 glow">
-            <h2 class="text-2xl font-bold mb-5 flex items-center gap-2">
-                <i class="fas fa-cog text-emerald-400"></i> Settings
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">Finnhub API Key</label>
-                    <input id="apiKey" type="password" placeholder="Masukkan API Key" 
-                        class="bg-gray-800 p-3 rounded-xl w-full text-white border border-gray-700 focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">Telegram Bot Token</label>
-                    <input id="botToken" type="password" placeholder="Bot Token" 
-                        class="bg-gray-800 p-3 rounded-xl w-full text-white border border-gray-700 focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">Telegram Chat ID</label>
-                    <input id="chatId" type="text" placeholder="Chat ID" 
-                        class="bg-gray-800 p-3 rounded-xl w-full text-white border border-gray-700 focus:border-emerald-500">
-                </div>
-                <div class="flex items-center gap-3 mt-6">
-                    <input id="enableTelegram" type="checkbox" checked class="w-5 h-5 accent-emerald-500">
-                    <label class="text-gray-300">Enable Telegram Alert</label>
-                </div>
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div>
+                <h1 class="text-3xl font-black text-emerald-400 tracking-tight">
+                    <i class="fas fa-robot mr-2"></i>SMC AI QUANT TRADING DASHBOARD
+                </h1>
+                <p class="text-gray-400 text-sm">Real-time Advanced Market Structure & Smart Money Concepts</p>
             </div>
-            <div class="flex gap-3 mt-5">
-                <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-xl font-medium transition">
-                    <i class="fas fa-save mr-2"></i>Save Settings
-                </button>
-                <button onclick="testTelegram()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-3 rounded-xl font-medium transition">
-                    <i class="fab fa-telegram mr-2"></i>Test Telegram
-                </button>
+            <div class="flex items-center gap-3 bg-slate-800 px-4 py-2 rounded-2xl border border-slate-700">
+                <span id="priceDisplay" class="text-2xl font-mono text-emerald-400 font-bold">--</span>
+                <span id="status" class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-md font-semibold">Connecting...</span>
             </div>
         </div>
 
-        <div class="flex flex-wrap justify-center gap-3 mb-8">
-            <button onclick="changeSymbol('EURUSD',this)" class="symbol-btn active px-6 py-3 bg-gray-800 rounded-2xl font-semibold">EUR/USD</button>
-            <button onclick="changeSymbol('GBPUSD',this)" class="symbol-btn px-6 py-3 bg-gray-800 rounded-2xl font-semibold">GBP/USD</button>
-            <button onclick="changeSymbol('USDJPY',this)" class="symbol-btn px-6 py-3 bg-gray-800 rounded-2xl font-semibold">USD/JPY</button>
-            <button onclick="changeSymbol('XAUUSD',this)" class="symbol-btn px-6 py-3 bg-gray-800 rounded-2xl font-semibold">XAU/USD</button>
-            <button onclick="changeSymbol('BTCUSD',this)" class="symbol-btn px-6 py-3 bg-gray-800 rounded-2xl font-semibold">BTC/USD</button>
+        <div class="card rounded-2xl p-4 mb-6 glow">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Finnhub API Key</label>
+                    <input id="apiKey" type="password" placeholder="Masukkan API Key" class="bg-slate-900/50 p-2.5 rounded-xl w-full text-white text-sm border border-slate-700 focus:border-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Telegram Bot Token</label>
+                    <input id="botToken" type="password" placeholder="Bot Token" class="bg-slate-900/50 p-2.5 rounded-xl w-full text-white text-sm border border-slate-700 focus:border-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Telegram Chat ID</label>
+                    <input id="chatId" type="text" placeholder="Chat ID" class="bg-slate-900/50 p-2.5 rounded-xl w-full text-white text-sm border border-slate-700 focus:border-emerald-500 outline-none">
+                </div>
+            </div>
+            <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-700/50">
+                <div class="flex items-center gap-2 text-sm text-gray-300">
+                    <input id="enableTelegram" type="checkbox" checked class="w-4 h-4 accent-emerald-500">
+                    <label for="enableTelegram">Kirim alert via Telegram</label>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-500 px-6 py-1.5 rounded-xl text-xs font-semibold transition">Save Settings</button>
+                </div>
+            </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            <div class="lg:col-span-2 card rounded-3xl p-6 border border-gray-800 glow">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 id="symbolTitle" class="text-3xl font-bold">EUR/USD</h2>
-                    <div class="flex items-center gap-3">
-                        <span id="priceDisplay" class="text-2xl font-mono text-emerald-400">--</span>
-                        <span id="status" class="text-yellow-400 font-medium text-sm">Connecting...</span>
-                    </div>
+        <div class="flex flex-wrap gap-2 mb-6">
+            <button onclick="changeSymbol('EURUSD',this)" class="symbol-btn active px-5 py-2.5 bg-slate-800 rounded-xl text-sm font-bold">EUR/USD</button>
+            <button onclick="changeSymbol('GBPUSD',this)" class="symbol-btn px-5 py-2.5 bg-slate-800 rounded-xl text-sm font-bold">GBP/USD</button>
+            <button onclick="changeSymbol('USDJPY',this)" class="symbol-btn px-5 py-2.5 bg-slate-800 rounded-xl text-sm font-bold">USD/JPY</button>
+            <button onclick="changeSymbol('XAUUSD',this)" class="symbol-btn px-5 py-2.5 bg-slate-800 rounded-xl text-sm font-bold">XAU/USD</button>
+            <button onclick="changeSymbol('BTCUSD',this)" class="symbol-btn px-5 py-2.5 bg-slate-800 rounded-xl text-sm font-bold">BTC/USD</button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 card rounded-3xl p-4 glow flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 id="chartTitle" class="font-bold text-lg text-slate-300">Live Candlestick Feed (H1 Base Generated)</h3>
+                    <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">Real-Time Tick Engine</span>
                 </div>
-                <canvas id="chart"></canvas>
+                <div id="chart" class="w-full h-[430px] rounded-2xl overflow-hidden bg-slate-950"></div>
             </div>
 
-            <div class="card rounded-3xl p-6 border border-gray-800 glow">
-                <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-                    <i class="fas fa-robot text-emerald-400"></i> AI MAIN SIGNAL
+            <div class="card rounded-3xl p-5 glow">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-hourglass-half text-emerald-400"></i> Multi-Timeframe Forecasts
                 </h2>
-                <div id="prediction" class="text-center py-8 text-5xl font-black rounded-3xl bg-gray-800/50 mb-4 transition-colors duration-300">
-                    <span id="predictionText" class="text-yellow-400">WAIT</span>
-                </div>
                 
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between py-2 border-b border-gray-700">
-                        <span class="text-gray-400">Main Trend</span>
-                        <span id="trend" class="font-medium">-</span>
+                <div class="space-y-2.5 max-h-[440px] overflow-y-auto pr-1">
+                    <div class="flex justify-between items-center bg-slate-900/40 p-3 rounded-xl border border-slate-800">
+                        <div><span class="font-bold text-sm block">1 Menit (M1)</span><span class="text-xs text-gray-400" id="analysis-1m">Calculating...</span></div>
+                        <span id="tf-1m" class="px-3 py-1 rounded-lg text-xs font-black bg-slate-800 text-gray-400">WAIT</span>
                     </div>
-                    <div class="flex justify-between py-2 border-b border-gray-700">
-                        <span class="text-gray-400">RSI (14)</span>
-                        <span id="rsi" class="font-mono">-</span>
-                    </div>
-                    <div class="flex justify-between py-2 border-b border-gray-700">
-                        <span class="text-gray-400">MACD</span>
-                        <span id="macd" class="font-mono">-</span>
-                    </div>
-                    <div class="flex justify-between py-2 border-b border-gray-700">
-                        <span class="text-gray-400">News Sentiment</span>
-                        <span id="newsSentiment" class="font-bold text-yellow-400">NEUTRAL</span>
-                    </div>
-                    <div class="flex justify-between py-2 border-b border-gray-700">
-                        <span class="text-gray-400">Accuracy Score</span>
-                        <span id="accuracy" class="font-bold text-emerald-400">-</span>
-                    </div>
-                    <div class="flex justify-between py-1">
-                        <span class="text-gray-400">Risk Level</span>
-                        <span id="risk" class="font-medium">-</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card rounded-3xl p-6 border border-gray-800 mb-6 glow">
-            <h2 class="text-2xl font-bold mb-5 flex items-center gap-2">
-                <i class="fas fa-layer-group text-emerald-400"></i> Multi-Timeframe Candlestick AI Analytics
-            </h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="bg-gray-900/60 p-4 rounded-2xl border border-gray-800 flex flex-col justify-between">
-                    <div class="text-center font-bold text-gray-400 border-b border-gray-800 pb-1 mb-2">1 MENIT</div>
-                    <div id="tf-1m-sig" class="text-center font-black text-xl text-yellow-400 my-1">LOADING</div>
-                    <div class="text-xs space-y-1 text-gray-400">
-                        <div class="flex justify-between"><span>Trend:</span><span id="tf-1m-tr" class="text-white">-</span></div>
-                        <div class="flex justify-between"><span>Vol:</span><span id="tf-1m-vol" class="text-white">-</span></div>
-                        <div class="flex justify-between"><span>Candle:</span><span id="tf-1m-cd" class="text-white truncate max-w-[60px] text-right">-</span></div>
-                    </div>
-                </div>
-                <div class="bg-gray-900/60 p-4 rounded-2xl border border-gray-800 flex flex-col justify-between">
-                    <div class="text-center font-bold text-gray-400 border-b border-gray-800 pb-1 mb-2">5 MENIT</div>
-                    <div id="tf-5m-sig" class="text-center font-black text-xl text-yellow-400 my-1">LOADING</div>
-                    <div class="text-xs space-y-1 text-gray-400">
-                        <div class="flex justify-between"><span>Trend:</span><span id="tf-5m-tr" class="text-white">-</span></div>
-                        <div class="flex justify-between"><span>Vol:</span><span id="tf-5m-vol" class="text-white">-</span></div>
-                        <div class="flex justify-between"><span>Candle:</span><span id="tf-5m-cd" class="text-white truncate max-w-[60px] text-right">-</span></div>
-                    </div>
-                </div>
-                <div class="bg-gray-900/60 p-4 rounded-2xl border border-gray-800 flex flex-col justify-between">
-                    <div class="text-center font-bold text-gray-400 border-b border-gray-800 pb-1 mb-2">15 MENIT</div>
-                    <div id="tf-15m-sig" class="text-center font-black text-xl text-yellow-400 my-1">LOADING</div>
-                    <div class="text-xs space-y-1 text-gray-400">
-                        <div class="flex justify-between"><span>Trend:</span><span id="tf-15m-tr" class="text-white">-</span></div>
-                        <div class="flex justify-between"><span>Vol:</span><span id="tf-15m-vol" class="text-white">-</span></div>
-                        <div class="flex justify-between"><span>Candle:</span><span id="tf-15m-cd" class="text-white truncate max-w-[60px] text-right">-</span></div>
-                    </div>
-                </div>
-                <div class="bg-gray-900/60 p-4 rounded-2xl border border-gray-800 flex flex-col justify-between">
-                    <div class="text-center font-bold text-gray-400 border-b border-gray-800 pb-1 mb-2">1 JAM</div>
-                    <div id="tf-1h-sig" class="text-center font-black text-xl text-yellow-400 my-1">LOADING</div>
-                    <div class="text-xs space-y-1 text-gray-400">
-                        <div class="flex justify-between"><span>Trend:</span><span id="tf-1h-tr" class="text-white">-</span></div>
-                        <div class="flex justify-between"><span>Vol:</span><span id="tf-1h-vol" class="text-white">-</span></div>
-                        <div class="flex justify-between"><span>Candle:</span><span id="tf-1h-cd" class="text-white truncate max-w-[60px] text-right">-</span></div>
-                    </div>
-                </div>
-                <div class="bg-gray-900/60 p-4 rounded-2xl border border-gray-800 flex flex-col justify-between">
-                    <div class="text-center font-bold text-gray-400 border-b border-gray-800 pb-1 mb-2">4 JAM</div>
-                    <div id="tf-4h-sig" class="text-center font-black text-xl text-yellow-400 my-1">LOADING</div>
-                    <div class="text-xs space-y-1 text-gray-400">
-                        <div class="flex justify-between"><span>Trend:</span><span id="tf-4h-tr" class="text-white">-</span></div>
-                        <div class="flex justify-between"><span>Vol:</span><span id="tf-4h-vol" class="text-white">-</span></div>
-                        <div class="flex justify-between"><span>Candle:</span><span id="tf-4h-cd" class="text-white truncate max-w-[60px] text-right">-</span></div>
-                    </div>
-                </div>
-                <div class="bg-gray-900/60 p-4 rounded-2xl border border-gray-800 flex flex-col justify-between">
-                    <div class="text-center font-bold text-gray-400 border-b border-gray-800 pb-1 mb-2">1 HARI</div>
-                    <div id="tf-1d-sig" class="text-center font-black text-xl text-yellow-400 my-1">LOADING</div>
-                    <div class="text-xs space-y-1 text-gray-400">
+                    <div class="flex justify-between items-center bg-slate-900/40 p-3 rounded-xl border border-slate-800">
+                        <div><span class="font-bold text-sm block">5 Menit (M5)</span><span class="text-xs text-gray-400" id="analysis-5m">Calculating...</span></div>
+                        <span id="tf-5m" class="px-3 py-1 rounded-lg text-xs font-black bg-slate-800 text-
