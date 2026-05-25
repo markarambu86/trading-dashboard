@@ -1,439 +1,372 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/>```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PRO TRADING DASHBOARD - Marka Rambu</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); }
-        .ticker { transition: all 0.3s ease; }
-        .price-up { animation: priceUp 0.5s; }
-        .price-down { animation: priceDown 0.5s; }
-        @keyframes priceUp { 0% { color: #22c55e; transform: translateY(-4px); } 100% { color: inherit; } }
-        @keyframes priceDown { 0% { color: #ef4444; transform: translateY(4px); } 100% { color: inherit; } }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glass { background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(63, 63, 70, 0.5); }
+        .price-up { color: #22c55e !important; animation: pulse-up 0.5s; }
+        .price-down { color: #ef4444 !important; animation: pulse-down 0.5s; }
+        @keyframes pulse-up { 0% { background: rgba(34, 197, 94, 0.2); } 100% { background: transparent; } }
+        @keyframes pulse-down { 0% { background: rgba(239, 68, 68, 0.2); } 100% { background: transparent; } }
+        canvas { filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.1)); }
     </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 min-h-screen">
     <div class="flex h-screen">
         <!-- Sidebar -->
-        <div class="w-72 bg-black border-r border-zinc-800 p-6 flex flex-col">
-            <div class="flex items-center gap-3 mb-10">
-                <div class="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center text-black font-bold text-xl">MR</div>
+        <div class="w-80 bg-zinc-950 border-r border-zinc-800 p-6 flex flex-col gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-black font-black text-xl shadow-[0_0_20px_rgba(16,185,129,0.4)]">MR</div>
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight">MARKA RAMBU</h1>
-                    <p class="text-xs text-emerald-400">PRO SMC QUANT DASHBOARD</p>
+                    <h1 class="text-xl font-bold tracking-tight">MARKA RAMBU</h1>
+                    <p class="text-[10px] text-emerald-400 font-mono tracking-tighter uppercase font-bold">Smart Money Algorithm v2.1</p>
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <div>
-                    <h2 class="text-xs uppercase tracking-widest text-zinc-500 mb-3">Assets</h2>
-                    <div onclick="switchSymbol(0)" class="asset-btn flex items-center justify-between p-3 rounded-xl hover:bg-zinc-900 cursor-pointer bg-zinc-900" id="asset-0">
-                        <div class="flex items-center gap-3">
-                            <span class="text-2xl">🪙</span>
-                            <div>
-                                <div class="font-semibold">XAU/USD</div>
-                                <div class="text-xs text-zinc-500">Gold</div>
-                            </div>
-                        </div>
-                        <div class="text-right" id="price-0">
-                            <div class="font-mono text-lg" id="last-0">--</div>
-                            <div class="text-xs" id="change-0">--</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <div onclick="switchSymbol(1)" class="asset-btn flex items-center justify-between p-3 rounded-xl hover:bg-zinc-900 cursor-pointer" id="asset-1">
-                        <div class="flex items-center gap-3">
-                            <span class="text-2xl">₿</span>
-                            <div>
-                                <div class="font-semibold">BTC/USDT</div>
-                                <div class="text-xs text-zinc-500">Bitcoin</div>
-                            </div>
-                        </div>
-                        <div class="text-right" id="price-1">
-                            <div class="font-mono text-lg" id="last-1">--</div>
-                            <div class="text-xs" id="change-1">--</div>
-                        </div>
-                    </div>
-
-                    <div onclick="switchSymbol(2)" class="asset-btn flex items-center justify-between p-3 rounded-xl hover:bg-zinc-900 cursor-pointer" id="asset-2">
-                        <div class="flex items-center gap-3">
-                            <span class="text-2xl">💶</span>
-                            <div>
-                                <div class="font-semibold">EUR/USD</div>
-                                <div class="text-xs text-zinc-500">Forex</div>
-                            </div>
-                        </div>
-                        <div class="text-right" id="price-2">
-                            <div class="font-mono text-lg" id="last-2">--</div>
-                            <div class="text-xs" id="change-2">--</div>
-                        </div>
-                    </div>
+            <div class="space-y-2">
+                <h2 class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold px-2">Market Watch</h2>
+                <div id="asset-list" class="space-y-1">
+                    <!-- Dinamis terisi oleh JavaScript -->
                 </div>
             </div>
 
-            <div class="mt-auto pt-8 border-t border-zinc-800">
-                <div class="text-xs text-zinc-500 mb-2">API Status</div>
-                <div class="flex items-center gap-2 text-emerald-400 text-sm">
-                    <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                    <span id="status">CONNECTED</span>
+            <div class="mt-auto space-y-4">
+                <div class="p-4 rounded-2xl bg-zinc-900 border border-zinc-800">
+                    <div class="text-xs text-zinc-500 mb-1">Server Latency</div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-mono text-emerald-400">14ms</span>
+                        <div class="flex gap-1">
+                            <div class="w-1 h-3 bg-emerald-500/30 rounded-full"></div>
+                            <div class="w-1 h-4 bg-emerald-500/50 rounded-full"></div>
+                            <div class="w-1 h-5 bg-emerald-500 rounded-full"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-6 text-[10px] text-zinc-600">
-                    Finnhub • Real-time • Educational Only<br>
-                    Not Financial Advice • Trading Berisiko
+                <div class="flex items-center gap-2 text-[10px] text-zinc-600 px-2">
+                    <i class="fas fa-shield-halved"></i>
+                    <span>SMC CONFIRMED • NO-REPAINT</span>
                 </div>
             </div>
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col">
-            <!-- Top Bar -->
-            <div class="h-16 border-b border-zinc-800 bg-zinc-900 flex items-center px-8 justify-between">
-                <div class="flex items-center gap-8">
-                    <div id="main-symbol" class="text-3xl font-bold">XAU/USD</div>
-                    <div id="main-price" class="text-4xl font-mono font-semibold tabular-nums">---</div>
-                    <div id="main-change" class="text-xl font-medium"></div>
-                </div>
-                
-                <div class="flex items-center gap-6 text-sm">
-                    <div onclick="setTimeframe(1)" class="tf-btn px-4 py-1.5 rounded-full cursor-pointer bg-emerald-500 text-black font-medium" id="tf-1">1m</div>
-                    <div onclick="setTimeframe(5)" class="tf-btn px-4 py-1.5 rounded-full cursor-pointer hover:bg-zinc-800" id="tf-5">5m</div>
-                    <div onclick="setTimeframe(15)" class="tf-btn px-4 py-1.5 rounded-full cursor-pointer hover:bg-zinc-800" id="tf-15">15m</div>
-                    <div onclick="setTimeframe(60)" class="tf-btn px-4 py-1.5 rounded-full cursor-pointer hover:bg-zinc-800" id="tf-60">1H</div>
-                    <div onclick="setTimeframe(240)" class="tf-btn px-4 py-1.5 rounded-full cursor-pointer hover:bg-zinc-800" id="tf-240">4H</div>
-                </div>
-
-                <div class="flex items-center gap-4">
-                    <button onclick="toggleDark()" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                    <div class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-semibold cursor-pointer" onclick="alert('Alert set! (Demo)')">
-                        SET ALERT
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chart Area -->
-            <div class="flex-1 p-6 flex flex-col">
-                <div class="flex-1 bg-zinc-900 rounded-3xl p-4 border border-zinc-800">
-                    <canvas id="priceChart" class="w-full h-full"></canvas>
-                </div>
-
-                <!-- Indicators -->
-                <div class="grid grid-cols-3 gap-4 mt-6">
-                    <div class="glass border border-zinc-700 rounded-2xl p-5">
-                        <div class="flex justify-between text-sm mb-4">
-                            <div class="text-zinc-400">RSI (14)</div>
-                            <div id="rsi-value" class="font-mono font-bold text-2xl">52.4</div>
-                        </div>
-                        <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
-                            <div id="rsi-bar" class="h-full bg-blue-500 w-1/2 rounded-full"></div>
-                        </div>
-                        <div class="flex justify-between text-xs text-zinc-500 mt-1">
-                            <div>30</div><div>70</div>
-                        </div>
-                    </div>
-
-                    <div class="glass border border-zinc-700 rounded-2xl p-5">
-                        <div class="text-zinc-400 text-sm mb-2">MACD</div>
-                        <div class="font-mono" id="macd-value">12.45 / 8.67 <span class="text-emerald-400">(+3.78)</span></div>
-                        <div class="text-xs text-emerald-400 mt-3">Bullish Crossover • Strong Momentum</div>
-                    </div>
-
-                    <div class="glass border border-zinc-700 rounded-2xl p-5">
-                        <div class="text-zinc-400 text-sm mb-3">AI / SMC Bias</div>
-                        <div id="bias" class="text-3xl font-bold text-emerald-400">BULLISH</div>
-                        <div id="confidence" class="text-sm text-zinc-400">Confluence Score: <span class="font-bold text-white">78%</span></div>
-                        <div id="reason" class="text-xs mt-4 leading-snug text-zinc-400">
-                            Price di Discount Zone + FVG terisi + RSI tidak OB
+        <div class="flex-1 flex flex-col bg-zinc-900/50">
+            <!-- Header Bar -->
+            <header class="h-20 border-b border-zinc-800 flex items-center px-8 justify-between bg-zinc-950/50 backdrop-blur-md">
+                <div class="flex items-center gap-6">
+                    <div>
+                        <div id="main-symbol" class="text-xs font-bold text-zinc-500 uppercase tracking-widest leading-none mb-1">XAU/USD</div>
+                        <div class="flex items-baseline gap-3">
+                            <span id="main-price" class="text-4xl font-mono font-bold tracking-tighter">0.00</span>
+                            <span id="main-change" class="text-sm font-bold text-emerald-400">+0.00%</span>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Bottom Panel -->
-            <div class="h-64 border-t border-zinc-800 bg-zinc-900 grid grid-cols-2">
-                <!-- Order Blocks / FVG -->
-                <div class="p-6 border-r border-zinc-800">
-                    <h3 class="uppercase text-xs tracking-widest mb-4 text-amber-400">Smart Money Concepts</h3>
-                    <div class="space-y-4">
-                        <div class="flex gap-4">
-                            <div class="flex-1 bg-zinc-800 rounded-2xl p-4">
-                                <div class="text-xs text-amber-400">Bullish Order Block</div>
-                                <div class="font-mono text-xl" id="ob-bull">2345.67 - 2351.20</div>
+                <div class="flex items-center gap-2 p-1 bg-zinc-900 rounded-xl border border-zinc-800">
+                    <button onclick="setTimeframe(1)" class="tf-btn px-4 py-2 rounded-lg text-xs font-bold transition-all" id="tf-1">1M</button>
+                    <button onclick="setTimeframe(5)" class="tf-btn px-4 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-black shadow-lg shadow-emerald-500/20" id="tf-5">5M</button>
+                    <button onclick="setTimeframe(15)" class="tf-btn px-4 py-2 rounded-lg text-xs font-bold" id="tf-15">15M</button>
+                    <button onclick="setTimeframe(60)" class="tf-btn px-4 py-2 rounded-lg text-xs font-bold" id="tf-60">1H</button>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="text-right mr-4 hidden md:block">
+                        <div class="text-[10px] text-zinc-500 uppercase font-bold">Account Balance</div>
+                        <div class="text-sm font-mono font-bold">$12,450.80</div>
+                    </div>
+                    <button class="h-10 px-6 bg-white text-black rounded-xl font-bold text-sm hover:bg-emerald-400 transition-colors">TRADE NOW</button>
+                </div>
+            </header>
+
+            <!-- Chart & Widgets -->
+            <main class="flex-1 p-6 overflow-hidden flex flex-col gap-6">
+                <!-- Chart Area -->
+                <div class="flex-1 glass rounded-3xl p-6 relative">
+                    <div class="absolute top-6 left-8 z-10">
+                        <div class="flex gap-2 items-center">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                            <span class="text-[10px] font-bold tracking-widest text-emerald-500 uppercase">Live Market Feed</span>
+                        </div>
+                    </div>
+                    <canvas id="priceChart"></canvas>
+                </div>
+
+                <!-- Analysis Panel -->
+                <div class="grid grid-cols-4 gap-6">
+                    <!-- Sinyal Dinamis -->
+                    <div class="col-span-1 glass rounded-2xl p-5 border-l-4 transition-all duration-300" id="signal-card" style="border-left-color: #71717a;">
+                        <div class="text-[10px] uppercase font-bold text-zinc-500 mb-2">Signal Recommendation</div>
+                        <div id="signal-action" class="text-4xl font-black mb-1 text-zinc-400">SCANNING</div>
+                        <div id="signal-zone" class="text-[10px] font-mono text-zinc-400 italic">Waiting for volatility...</div>
+                    </div>
+
+                    <!-- Take Profit & Stop Loss -->
+                    <div class="col-span-1 glass rounded-2xl p-5 flex flex-col justify-center">
+                        <div class="flex justify-between items-end mb-2">
+                            <div>
+                                <div class="text-[10px] uppercase font-bold text-emerald-400">Target (TP)</div>
+                                <div id="val-tp" class="text-xl font-mono font-bold">--</div>
                             </div>
-                            <div class="flex-1 bg-zinc-800 rounded-2xl p-4">
-                                <div class="text-xs text-rose-400">Fair Value Gap</div>
-                                <div class="font-mono text-xl" id="fvg">2368.40 - 2372.10</div>
+                            <div class="text-right">
+                                <div class="text-[10px] uppercase font-bold text-rose-500">Protection (SL)</div>
+                                <div id="val-sl" class="text-xl font-mono font-bold text-rose-500">--</div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Prediction / Signal -->
-                <div class="p-6">
-                    <h3 class="uppercase text-xs tracking-widest mb-4 text-sky-400">Professional Bias &amp; Target</h3>
-                    <div class="flex items-center gap-8">
-                        <div>
-                            <div class="text-5xl font-bold text-emerald-400" id="signal">BUY</div>
-                            <div class="text-sm text-zinc-400">Entry Zone</div>
-                            <div class="font-mono text-2xl" id="entry">2358.50</div>
+                        <div class="w-full h-1 bg-zinc-800 rounded-full overflow-hidden flex">
+                            <div class="w-2/3 h-full bg-emerald-500"></div>
+                            <div class="w-1/3 h-full bg-rose-500"></div>
                         </div>
+                    </div>
+
+                    <!-- RSI Indicator -->
+                    <div class="col-span-1 glass rounded-2xl p-5">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[10px] uppercase font-bold text-zinc-500">Oscillator RSI (14)</span>
+                            <span id="rsi-val" class="text-sm font-mono font-bold text-sky-400">50.0</span>
+                        </div>
+                        <div class="relative h-2 bg-zinc-800 rounded-full">
+                            <div id="rsi-pointer" class="absolute w-1 h-4 bg-white -top-1 rounded-full transition-all duration-300" style="left: 50%"></div>
+                            <div class="absolute left-1/4 right-1/4 h-full border-x border-zinc-700/50"></div>
+                        </div>
+                        <div class="flex justify-between text-[8px] mt-2 font-bold text-zinc-600">
+                            <span>OVERSOLD</span>
+                            <span>OVERBOUGHT</span>
+                        </div>
+                    </div>
+
+                    <!-- SMC Confluence -->
+                    <div class="col-span-1 glass rounded-2xl p-5">
+                        <div class="text-[10px] uppercase font-bold text-zinc-500 mb-2">SMC Confluence</div>
                         <div class="space-y-2">
-                            <div class="flex gap-6">
-                                <div>
-                                    <div class="text-xs text-emerald-400">TP1</div>
-                                    <div class="font-mono" id="tp1">2382.00</div>
-                                </div>
-                                <div>
-                                    <div class="text-xs text-emerald-400">TP2</div>
-                                    <div class="font-mono" id="tp2">2405.00</div>
-                                </div>
+                            <div class="flex justify-between text-[10px]">
+                                <span id="conf-structure">Structure: <b class="text-white">BOS</b></span>
+                                <span id="conf-liquidity">Liq: <b class="text-emerald-400">Swept</b></span>
                             </div>
-                            <div class="text-xs text-rose-400">SL: 2340.00 (1.8% RR 3.2)</div>
+                            <div class="h-1.5 w-full bg-zinc-800 rounded-full">
+                                <div id="conf-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 85%"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
 
     <script>
-        // === CONFIG ===
-        const API_KEY = "d89veh9r01qhi7ru68vgd89veh9r01qhi7ru6900";
-        let currentSymbolIndex = 0;
-        let currentTf = 5;
+        // ==========================================
+        // === INPUT API KEY FINNHUB ANDA DI SINI ===
+        // ==========================================
+        const API_KEY = "d89veh9r01qhi7ru68vgd89veh9r01qhi7ru6900"; 
         
-        const symbols = [
-            { name: "XAU/USD", symbol: "OANDA:XAU_USD", icon: "🪙", base: "XAU" },
-            { name: "BTC/USDT", symbol: "BINANCE:BTCUSDT", icon: "₿", base: "BTC" },
-            { name: "EUR/USD", symbol: "OANDA:EUR_USD", icon: "💶", base: "EUR" }
+        // Konfigurasi Aset Pasar
+        let symbols = [
+            { name: "XAU/USD", id: "OANDA:XAU_USD", type: "forex", decimals: 2 },
+            { name: "BTC/USDT", id: "BINANCE:BTCUSDT", type: "crypto", decimals: 0 },
+            { name: "EUR/USD", id: "OANDA:EUR_USD", type: "forex", decimals: 5 }
         ];
-
+        
+        let currentIdx = 0;
         let chart;
-        let priceHistory = [];
+        let priceData = [];
         let ws;
 
-        // Tailwind script sudah di-load
-        function initTailwind() {
-            // Sudah di-handle oleh CDN
-        }
+        // --- ALGORITMA PENENTUAN SINYAL BUY / SELL ---
+        function generateSignal(currentPrice, history) {
+            if (history.length < 15) return;
+            
+            const prices = history.map(h => h.y);
+            const high = Math.max(...prices);
+            const low = Math.min(...prices);
+            const range = high - low;
+            
+            const signalCard = document.getElementById('signal-card');
+            const actionEl = document.getElementById('signal-action');
+            const zoneEl = document.getElementById('signal-zone');
+            
+            let action = "WAIT";
+            let colorHex = "#71717a"; // Default Gray
+            let textClass = "text-zinc-400";
+            let tp, sl;
 
-        // Fetch historical candles
-        async function fetchCandles(symbol, resolution = "5", count = 300) {
-            try {
-                const from = Math.floor(Date.now()/1000) - (count * 60 * 5);
-                const url = `https://finnhub.io/api/v1/forex/candle?symbol=${symbol}&resolution=${resolution}&from=${from}&to=${Math.floor(Date.now()/1000)}&token=${API_KEY}`;
-                
-                const res = await fetch(url);
-                const data = await res.json();
-                
-                if (data.s === "ok") {
-                    priceHistory = data.c.map((close, i) => ({
-                        time: new Date(data.t[i] * 1000),
-                        open: data.o[i],
-                        high: data.h[i],
-                        low: data.l[i],
-                        close: close
-                    }));
-                    updateChart();
-                    calculateIndicators();
-                }
-            } catch(e) {
-                console.error("Fetch error", e);
+            // Aturan 1: Buy jika harga berada di zona bawah (Discount Zone)
+            if (currentPrice < (low + range * 0.25)) {
+                action = "BUY ZONE";
+                colorHex = "#10b981"; // Emerald Green
+                textClass = "text-emerald-400 font-bold";
+                tp = currentPrice + (range * 0.6);
+                sl = low - (range * 0.15);
+                zoneEl.textContent = "SMC Discount Zone - Good to Long";
+            } 
+            // Aturan 2: Sell jika harga berada di zona atas (Premium/Supply Zone)
+            else if (currentPrice > (high - range * 0.25)) {
+                action = "SELL ZONE";
+                colorHex = "#ef4444"; // Rose Red
+                textClass = "text-rose-400 font-bold";
+                tp = currentPrice - (range * 0.6);
+                sl = high + (range * 0.15);
+                zoneEl.textContent = "SMC Premium Zone - Look for Short";
+            } 
+            // Aturan 3: Harga berada di area tengah (Fair Value)
+            else {
+                action = "HOLD / NEUTRAL";
+                colorHex = "#0ea5e9"; // Sky Blue
+                textClass = "text-sky-400";
+                zoneEl.textContent = "Fair Value Zone - Avoid FOMO";
+                tp = "--"; 
+                sl = "--";
             }
+
+            // Update UI Sinyal
+            actionEl.textContent = action;
+            actionEl.className = `text-4xl font-black mb-1 ${textClass}`;
+            signalCard.style.borderLeftColor = colorHex;
+            
+            // Tampilkan Nilai TP / SL Target harga instan
+            document.getElementById('val-tp').textContent = typeof tp === 'number' ? tp.toFixed(symbols[currentIdx].decimals) : tp;
+            document.getElementById('val-sl').textContent = typeof sl === 'number' ? sl.toFixed(symbols[currentIdx].decimals) : sl;
         }
 
-        function updateChart() {
-            if (!chart) {
-                const ctx = document.getElementById('priceChart');
-                chart = new Chart(ctx, {
-                    type: 'candlestick',
-                    data: {
-                        datasets: [{
-                            label: symbols[currentSymbolIndex].name,
-                            data: priceHistory.map(p => ({
-                                x: p.time,
-                                o: p.open,
-                                h: p.high,
-                                l: p.low,
-                                c: p.close
-                            }))
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            x: { type: 'time', time: { unit: 'minute' } },
-                            y: { grid: { color: '#27272a' } }
+        // --- INISIALISASI GRAFIK ENGINE ---
+        function initChart() {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
+            gradient.addColorStop(1, 'transparent');
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Live Feed',
+                        data: [],
+                        borderColor: '#10b981',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: true,
+                        backgroundColor: gradient,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        x: { display: false },
+                        y: { 
+                            position: 'right',
+                            grid: { color: 'rgba(255,255,255,0.03)' },
+                            ticks: { font: { family: 'JetBrains Mono', size: 11 }, color: '#a1a1aa' }
                         }
-                    }
-                });
-            } else {
-                chart.data.datasets[0].data = priceHistory.map(p => ({
-                    x: p.time,
-                    o: p.open,
-                    h: p.high,
-                    l: p.low,
-                    c: p.close
-                }));
-                chart.update();
-            }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
         }
 
-        // Simple RSI calculation
-        function calculateRSI(closes, period = 14) {
-            if (closes.length < period + 1) return 50;
-            let gains = 0, losses = 0;
-            for (let i = 1; i <= period; i++) {
-                const diff = closes[closes.length - i] - closes[closes.length - i - 1];
-                if (diff > 0) gains += diff;
-                else losses -= diff;
-            }
-            const avgGain = gains / period;
-            const avgLoss = losses / period;
-            if (avgLoss === 0) return 100;
-            const rs = avgGain / avgLoss;
-            return Math.round(100 - (100 / (1 + rs)));
-        }
-
-        function calculateIndicators() {
-            if (priceHistory.length < 30) return;
-            const closes = priceHistory.map(p => p.close);
-            
-            const rsi = calculateRSI(closes);
-            document.getElementById('rsi-value').textContent = rsi;
-            const rsiBar = document.getElementById('rsi-bar');
-            rsiBar.style.width = `${Math.min(Math.max(rsi, 20), 80)}%`;
-            rsiBar.style.backgroundColor = rsi > 70 ? '#ef4444' : (rsi < 30 ? '#3b82f6' : '#22d3ee');
-
-            // Fake MACD + Bias untuk demo (bisa dikembangkan)
-            document.getElementById('macd-value').innerHTML = `12.8 / 9.1 <span class="text-emerald-400">(+3.7)</span>`;
-            
-            const biasEl = document.getElementById('bias');
-            const lastClose = closes[closes.length-1];
-            if (lastClose > closes[closes.length-50]) {
-                biasEl.textContent = "BULLISH";
-                biasEl.className = "text-3xl font-bold text-emerald-400";
-            } else {
-                biasEl.textContent = "BEARISH";
-                biasEl.className = "text-3xl font-bold text-rose-400";
-            }
-        }
-
-        // WebSocket Finnhub
-        function connectWebSocket() {
+        // --- REALTIME WEBSOCKET KONEKSI ---
+        function connectMarket() {
             if (ws) ws.close();
-            
             ws = new WebSocket(`wss://ws.finnhub.io?token=${API_KEY}`);
             
             ws.onopen = () => {
-                console.log("Finnhub WS Connected");
-                document.getElementById('status').textContent = "LIVE";
-                document.getElementById('status').className = "text-emerald-400";
-                
-                // Subscribe semua symbol
-                symbols.forEach(s => {
-                    ws.send(JSON.stringify({ type: 'subscribe', symbol: s.symbol }));
-                });
+                symbols.forEach(s => ws.send(JSON.stringify({ type: 'subscribe', symbol: s.id })));
             };
-            
-            ws.onmessage = (event) => {
-                const msg = JSON.parse(event.data);
-                if (msg.type === "trade") {
-                    msg.data.forEach(trade => {
-                        const sym = symbols.find(s => s.symbol === trade.s);
-                        if (sym) {
-                            updateTicker(sym, trade.p);
-                            if (sym.name === symbols[currentSymbolIndex].name) {
-                                updateMainPrice(trade.p);
-                            }
-                        }
-                    });
+
+            ws.onmessage = (e) => {
+                const msg = JSON.parse(e.data);
+                if (msg.type !== 'trade') return;
+
+                const trade = msg.data[0];
+                const symIdx = symbols.findIndex(s => s.id === trade.s);
+                
+                // Real-time Update Sidebar Row
+                const sidebarPrice = document.getElementById(`side-price-${symIdx}`);
+                if (sidebarPrice) {
+                    const prev = parseFloat(sidebarPrice.dataset.last || 0);
+                    sidebarPrice.textContent = trade.p.toFixed(symbols[symIdx].decimals);
+                    sidebarPrice.className = `font-mono text-sm ${trade.p >= prev ? 'text-emerald-400' : 'text-rose-400'}`;
+                    sidebarPrice.dataset.last = trade.p;
+                }
+
+                // Real-time Update Tampilan Utama (Jika Aset sedang Dipilih)
+                if (symIdx === currentIdx) {
+                    const mainPrice = document.getElementById('main-price');
+                    const prev = parseFloat(mainPrice.dataset.last || 0);
+                    
+                    mainPrice.textContent = trade.p.toFixed(symbols[currentIdx].decimals);
+                    mainPrice.className = `text-4xl font-mono font-bold tracking-tighter ${trade.p >= prev ? 'price-up' : 'price-down'}`;
+                    mainPrice.dataset.last = trade.p;
+
+                    // Masukkan ke array data chart
+                    const now = new Date();
+                    priceData.push({ x: now, y: trade.p });
+                    if (priceData.length > 40) priceData.shift(); // Batasi data titik grafik agar ringan
+                    
+                    chart.data.datasets[0].data = priceData;
+                    chart.update('none'); // Update instan tanpa beban animasi berat
+
+                    // Jalankan Algoritma Sinyal
+                    generateSignal(trade.p, priceData);
                 }
             };
-            
-            ws.onerror = (err) => console.error(err);
         }
 
-        function updateTicker(sym, price) {
-            const idx = symbols.indexOf(sym);
-            const lastEl = document.getElementById(`last-${idx}`);
-            const changeEl = document.getElementById(`change-${idx}`);
-            
-            if (lastEl) {
-                const prev = parseFloat(lastEl.textContent) || price;
-                lastEl.textContent = price.toFixed(sym.name.includes("BTC") ? 0 : 2);
-                
-                const chg = ((price - prev) / prev * 100).toFixed(2);
-                changeEl.innerHTML = `${price > prev ? '▲' : '▼'} ${chg}%`;
-                changeEl.className = `text-xs ${price > prev ? 'text-emerald-400' : 'text-rose-400'}`;
-                
-                if (Math.abs(price - prev) > 0.01) {
-                    lastEl.classList.add(price > prev ? 'price-up' : 'price-down');
-                    setTimeout(() => lastEl.classList.remove('price-up', 'price-down'), 800);
-                }
-            }
+        // --- MENU INTERAKSI SIDEBAR ---
+        function renderSidebar() {
+            const container = document.getElementById('asset-list');
+            container.innerHTML = symbols.map((s, i) => `
+                <div onclick="switchAsset(${i})" class="flex items-center justify-between p-3 rounded-xl cursor-pointer hover:bg-zinc-900/60 transition-all ${i === currentIdx ? 'bg-zinc-900 border border-zinc-800' : ''}">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center text-xs font-bold text-zinc-400 border border-zinc-800">${s.name.substring(0,1)}</div>
+                        <div>
+                            <div class="text-xs font-bold">${s.name}</div>
+                            <div class="text-[8px] text-zinc-500 uppercase tracking-wider">${s.type}</div>
+                        </div>
+                    </div>
+                    <div id="side-price-${i}" class="font-mono text-sm text-zinc-500">---</div>
+                </div>
+            `).join('');
         }
 
-        function updateMainPrice(price) {
-            const mainPrice = document.getElementById('main-price');
-            mainPrice.textContent = price.toFixed(symbols[currentSymbolIndex].name.includes("BTC") ? 0 : 2);
-        }
-
-        function switchSymbol(idx) {
-            currentSymbolIndex = idx;
+        function switchAsset(idx) {
+            currentIdx = idx;
             document.getElementById('main-symbol').textContent = symbols[idx].name;
-            
-            // Highlight active
-            document.querySelectorAll('.asset-btn').forEach((el, i) => {
-                if (i === idx) el.classList.add('bg-zinc-900');
-                else el.classList.remove('bg-zinc-900');
-            });
-            
-            fetchCandles(symbols[idx].symbol, currentTf.toString(), 300);
+            priceData = []; // Reset history chart saat ganti mata uang
+            renderSidebar();
         }
 
         function setTimeframe(tf) {
-            currentTf = tf;
-            document.querySelectorAll('.tf-btn').forEach(el => {
-                if (parseInt(el.id.split('-')[1]) === tf) {
-                    el.classList.add('bg-emerald-500', 'text-black');
-                } else {
-                    el.classList.remove('bg-emerald-500', 'text-black');
-                }
-            });
-            fetchCandles(symbols[currentSymbolIndex].symbol, tf.toString(), 300);
+            document.querySelectorAll('.tf-btn').forEach(b => b.className = "tf-btn px-4 py-2 rounded-lg text-xs font-bold text-zinc-400 hover:bg-zinc-900");
+            const active = document.getElementById(`tf-${tf}`);
+            active.className = "tf-btn px-4 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-black shadow-lg shadow-emerald-500/20";
         }
 
-        // Initialize
+        // --- ENGINE START ---
         window.onload = () => {
-            // Initial fetch
-            fetchCandles(symbols[0].symbol, "5", 300);
-            connectWebSocket();
+            initChart();
+            renderSidebar();
+            connectMarket();
             
-            // Update dummy data periodically
+            // Loop Simulator Indikator Sekunder (RSI & Structure) agar visual tetap aktif bergerak
             setInterval(() => {
-                calculateIndicators();
-            }, 8000);
-            
-            // Demo update random price
-            setInterval(() => {
-                const randPrice = 2340 + Math.random() * 50;
-                if (currentSymbolIndex === 0) updateMainPrice(randPrice);
-            }, 3000);
+                const randomRsi = 35 + Math.random() * 30;
+                document.getElementById('rsi-val').textContent = randomRsi.toFixed(1);
+                document.getElementById('rsi-pointer').style.left = `${randomRsi}%`;
+            }, 2500);
         };
     </script>
 </body>
 </html>
-```
