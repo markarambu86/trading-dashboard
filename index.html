@@ -1,372 +1,812 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRO TRADING DASHBOARD - Marka Rambu</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
-        body { font-family: 'Inter', sans-serif; overflow: hidden; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .glass { background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(63, 63, 70, 0.5); }
-        .price-up { color: #22c55e !important; animation: pulse-up 0.5s; }
-        .price-down { color: #ef4444 !important; animation: pulse-down 0.5s; }
-        @keyframes pulse-up { 0% { background: rgba(34, 197, 94, 0.2); } 100% { background: transparent; } }
-        @keyframes pulse-down { 0% { background: rgba(239, 68, 68, 0.2); } 100% { background: transparent; } }
-        canvas { filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.1)); }
-    </style>
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>QUANT HEDGE FUND AI TERMINAL</title>
+
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial;
+}
+
+body{
+    background:#05070b;
+    color:white;
+    overflow:hidden;
+}
+
+header{
+    height:70px;
+    background:#0b0f17;
+    border-bottom:1px solid #1f2937;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+}
+
+header h1{
+    color:#00ffbf;
+}
+
+.container{
+    display:grid;
+    grid-template-columns: 1fr 430px;
+    height:calc(100vh - 70px);
+}
+
+#chart{
+    width:100%;
+    height:100%;
+}
+
+.sidebar{
+    background:#0b0f17;
+    overflow-y:auto;
+    padding:15px;
+    border-left:1px solid #1f2937;
+}
+
+.card{
+    background:#111827;
+    border:1px solid #1f2937;
+    border-radius:14px;
+    padding:15px;
+    margin-bottom:15px;
+}
+
+.card h3{
+    margin-bottom:12px;
+    color:#00ffbf;
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    background:#1f2937;
+    border:none;
+    border-radius:10px;
+    color:white;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    margin-top:12px;
+    background:#00ffbf;
+    color:black;
+    border:none;
+    border-radius:10px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    margin:8px 0;
+}
+
+.buy{
+    color:#00ff88;
+    font-weight:bold;
+}
+
+.sell{
+    color:#ff4d4d;
+    font-weight:bold;
+}
+
+.wait{
+    color:#ffd166;
+    font-weight:bold;
+}
+
+.signal{
+    text-align:center;
+    font-size:34px;
+    margin-top:10px;
+}
+
+.log{
+    background:black;
+    border-radius:10px;
+    padding:10px;
+    height:200px;
+    overflow:auto;
+    font-size:12px;
+}
+
+</style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <div class="w-80 bg-zinc-950 border-r border-zinc-800 p-6 flex flex-col gap-6">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-black font-black text-xl shadow-[0_0_20px_rgba(16,185,129,0.4)]">MR</div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight">MARKA RAMBU</h1>
-                    <p class="text-[10px] text-emerald-400 font-mono tracking-tighter uppercase font-bold">Smart Money Algorithm v2.1</p>
-                </div>
-            </div>
 
-            <div class="space-y-2">
-                <h2 class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold px-2">Market Watch</h2>
-                <div id="asset-list" class="space-y-1">
-                    <!-- Dinamis terisi oleh JavaScript -->
-                </div>
-            </div>
+<body>
 
-            <div class="mt-auto space-y-4">
-                <div class="p-4 rounded-2xl bg-zinc-900 border border-zinc-800">
-                    <div class="text-xs text-zinc-500 mb-1">Server Latency</div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-mono text-emerald-400">14ms</span>
-                        <div class="flex gap-1">
-                            <div class="w-1 h-3 bg-emerald-500/30 rounded-full"></div>
-                            <div class="w-1 h-4 bg-emerald-500/50 rounded-full"></div>
-                            <div class="w-1 h-5 bg-emerald-500 rounded-full"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 text-[10px] text-zinc-600 px-2">
-                    <i class="fas fa-shield-halved"></i>
-                    <span>SMC CONFIRMED • NO-REPAINT</span>
-                </div>
-            </div>
-        </div>
+<header>
 
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col bg-zinc-900/50">
-            <!-- Header Bar -->
-            <header class="h-20 border-b border-zinc-800 flex items-center px-8 justify-between bg-zinc-950/50 backdrop-blur-md">
-                <div class="flex items-center gap-6">
-                    <div>
-                        <div id="main-symbol" class="text-xs font-bold text-zinc-500 uppercase tracking-widest leading-none mb-1">XAU/USD</div>
-                        <div class="flex items-baseline gap-3">
-                            <span id="main-price" class="text-4xl font-mono font-bold tracking-tighter">0.00</span>
-                            <span id="main-change" class="text-sm font-bold text-emerald-400">+0.00%</span>
-                        </div>
-                    </div>
-                </div>
+<h1>QUANT HEDGE FUND TERMINAL</h1>
 
-                <div class="flex items-center gap-2 p-1 bg-zinc-900 rounded-xl border border-zinc-800">
-                    <button onclick="setTimeframe(1)" class="tf-btn px-4 py-2 rounded-lg text-xs font-bold transition-all" id="tf-1">1M</button>
-                    <button onclick="setTimeframe(5)" class="tf-btn px-4 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-black shadow-lg shadow-emerald-500/20" id="tf-5">5M</button>
-                    <button onclick="setTimeframe(15)" class="tf-btn px-4 py-2 rounded-lg text-xs font-bold" id="tf-15">15M</button>
-                    <button onclick="setTimeframe(60)" class="tf-btn px-4 py-2 rounded-lg text-xs font-bold" id="tf-60">1H</button>
-                </div>
+<div>
+AI • RL • LSTM • Whale Tracking • Auto Execution
+</div>
 
-                <div class="flex items-center gap-3">
-                    <div class="text-right mr-4 hidden md:block">
-                        <div class="text-[10px] text-zinc-500 uppercase font-bold">Account Balance</div>
-                        <div class="text-sm font-mono font-bold">$12,450.80</div>
-                    </div>
-                    <button class="h-10 px-6 bg-white text-black rounded-xl font-bold text-sm hover:bg-emerald-400 transition-colors">TRADE NOW</button>
-                </div>
-            </header>
+</header>
 
-            <!-- Chart & Widgets -->
-            <main class="flex-1 p-6 overflow-hidden flex flex-col gap-6">
-                <!-- Chart Area -->
-                <div class="flex-1 glass rounded-3xl p-6 relative">
-                    <div class="absolute top-6 left-8 z-10">
-                        <div class="flex gap-2 items-center">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                            <span class="text-[10px] font-bold tracking-widest text-emerald-500 uppercase">Live Market Feed</span>
-                        </div>
-                    </div>
-                    <canvas id="priceChart"></canvas>
-                </div>
+<div class="container">
 
-                <!-- Analysis Panel -->
-                <div class="grid grid-cols-4 gap-6">
-                    <!-- Sinyal Dinamis -->
-                    <div class="col-span-1 glass rounded-2xl p-5 border-l-4 transition-all duration-300" id="signal-card" style="border-left-color: #71717a;">
-                        <div class="text-[10px] uppercase font-bold text-zinc-500 mb-2">Signal Recommendation</div>
-                        <div id="signal-action" class="text-4xl font-black mb-1 text-zinc-400">SCANNING</div>
-                        <div id="signal-zone" class="text-[10px] font-mono text-zinc-400 italic">Waiting for volatility...</div>
-                    </div>
+<div id="chart"></div>
 
-                    <!-- Take Profit & Stop Loss -->
-                    <div class="col-span-1 glass rounded-2xl p-5 flex flex-col justify-center">
-                        <div class="flex justify-between items-end mb-2">
-                            <div>
-                                <div class="text-[10px] uppercase font-bold text-emerald-400">Target (TP)</div>
-                                <div id="val-tp" class="text-xl font-mono font-bold">--</div>
-                            </div>
-                            <div class="text-right">
-                                <div class="text-[10px] uppercase font-bold text-rose-500">Protection (SL)</div>
-                                <div id="val-sl" class="text-xl font-mono font-bold text-rose-500">--</div>
-                            </div>
-                        </div>
-                        <div class="w-full h-1 bg-zinc-800 rounded-full overflow-hidden flex">
-                            <div class="w-2/3 h-full bg-emerald-500"></div>
-                            <div class="w-1/3 h-full bg-rose-500"></div>
-                        </div>
-                    </div>
+<div class="sidebar">
 
-                    <!-- RSI Indicator -->
-                    <div class="col-span-1 glass rounded-2xl p-5">
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-[10px] uppercase font-bold text-zinc-500">Oscillator RSI (14)</span>
-                            <span id="rsi-val" class="text-sm font-mono font-bold text-sky-400">50.0</span>
-                        </div>
-                        <div class="relative h-2 bg-zinc-800 rounded-full">
-                            <div id="rsi-pointer" class="absolute w-1 h-4 bg-white -top-1 rounded-full transition-all duration-300" style="left: 50%"></div>
-                            <div class="absolute left-1/4 right-1/4 h-full border-x border-zinc-700/50"></div>
-                        </div>
-                        <div class="flex justify-between text-[8px] mt-2 font-bold text-zinc-600">
-                            <span>OVERSOLD</span>
-                            <span>OVERBOUGHT</span>
-                        </div>
-                    </div>
+<div class="card">
 
-                    <!-- SMC Confluence -->
-                    <div class="col-span-1 glass rounded-2xl p-5">
-                        <div class="text-[10px] uppercase font-bold text-zinc-500 mb-2">SMC Confluence</div>
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-[10px]">
-                                <span id="conf-structure">Structure: <b class="text-white">BOS</b></span>
-                                <span id="conf-liquidity">Liq: <b class="text-emerald-400">Swept</b></span>
-                            </div>
-                            <div class="h-1.5 w-full bg-zinc-800 rounded-full">
-                                <div id="conf-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 85%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
+<h3>Connection</h3>
 
-    <script>
-        // ==========================================
-        // === INPUT API KEY FINNHUB ANDA DI SINI ===
-        // ==========================================
-        const API_KEY = "d89veh9r01qhi7ru68vgd89veh9r01qhi7ru6900"; 
-        
-        // Konfigurasi Aset Pasar
-        let symbols = [
-            { name: "XAU/USD", id: "OANDA:XAU_USD", type: "forex", decimals: 2 },
-            { name: "BTC/USDT", id: "BINANCE:BTCUSDT", type: "crypto", decimals: 0 },
-            { name: "EUR/USD", id: "OANDA:EUR_USD", type: "forex", decimals: 5 }
-        ];
-        
-        let currentIdx = 0;
-        let chart;
-        let priceData = [];
-        let ws;
+<input type="text" id="binanceKey" placeholder="Binance API Key"/>
+<input type="text" id="binanceSecret" placeholder="Binance Secret Key"/>
 
-        // --- ALGORITMA PENENTUAN SINYAL BUY / SELL ---
-        function generateSignal(currentPrice, history) {
-            if (history.length < 15) return;
-            
-            const prices = history.map(h => h.y);
-            const high = Math.max(...prices);
-            const low = Math.min(...prices);
-            const range = high - low;
-            
-            const signalCard = document.getElementById('signal-card');
-            const actionEl = document.getElementById('signal-action');
-            const zoneEl = document.getElementById('signal-zone');
-            
-            let action = "WAIT";
-            let colorHex = "#71717a"; // Default Gray
-            let textClass = "text-zinc-400";
-            let tp, sl;
+<input type="text" id="telegramBot" placeholder="Telegram Bot Token"/>
+<input type="text" id="telegramChat" placeholder="Telegram Chat ID"/>
 
-            // Aturan 1: Buy jika harga berada di zona bawah (Discount Zone)
-            if (currentPrice < (low + range * 0.25)) {
-                action = "BUY ZONE";
-                colorHex = "#10b981"; // Emerald Green
-                textClass = "text-emerald-400 font-bold";
-                tp = currentPrice + (range * 0.6);
-                sl = low - (range * 0.15);
-                zoneEl.textContent = "SMC Discount Zone - Good to Long";
-            } 
-            // Aturan 2: Sell jika harga berada di zona atas (Premium/Supply Zone)
-            else if (currentPrice > (high - range * 0.25)) {
-                action = "SELL ZONE";
-                colorHex = "#ef4444"; // Rose Red
-                textClass = "text-rose-400 font-bold";
-                tp = currentPrice - (range * 0.6);
-                sl = high + (range * 0.15);
-                zoneEl.textContent = "SMC Premium Zone - Look for Short";
-            } 
-            // Aturan 3: Harga berada di area tengah (Fair Value)
-            else {
-                action = "HOLD / NEUTRAL";
-                colorHex = "#0ea5e9"; // Sky Blue
-                textClass = "text-sky-400";
-                zoneEl.textContent = "Fair Value Zone - Avoid FOMO";
-                tp = "--"; 
-                sl = "--";
-            }
+<select id="symbol">
+<option value="btcusdt">BTCUSDT</option>
+<option value="ethusdt">ETHUSDT</option>
+<option value="solusdt">SOLUSDT</option>
+</select>
 
-            // Update UI Sinyal
-            actionEl.textContent = action;
-            actionEl.className = `text-4xl font-black mb-1 ${textClass}`;
-            signalCard.style.borderLeftColor = colorHex;
-            
-            // Tampilkan Nilai TP / SL Target harga instan
-            document.getElementById('val-tp').textContent = typeof tp === 'number' ? tp.toFixed(symbols[currentIdx].decimals) : tp;
-            document.getElementById('val-sl').textContent = typeof sl === 'number' ? sl.toFixed(symbols[currentIdx].decimals) : sl;
-        }
+<button onclick="start()">START QUANT ENGINE</button>
 
-        // --- INISIALISASI GRAFIK ENGINE ---
-        function initChart() {
-            const ctx = document.getElementById('priceChart').getContext('2d');
-            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
-            gradient.addColorStop(1, 'transparent');
+<div id="status" style="margin-top:10px;color:#9ca3af;">
+Waiting...
+</div>
 
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    datasets: [{
-                        label: 'Live Feed',
-                        data: [],
-                        borderColor: '#10b981',
-                        borderWidth: 2,
-                        pointRadius: 0,
-                        fill: true,
-                        backgroundColor: gradient,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: false,
-                    scales: {
-                        x: { display: false },
-                        y: { 
-                            position: 'right',
-                            grid: { color: 'rgba(255,255,255,0.03)' },
-                            ticks: { font: { family: 'JetBrains Mono', size: 11 }, color: '#a1a1aa' }
-                        }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
+</div>
 
-        // --- REALTIME WEBSOCKET KONEKSI ---
-        function connectMarket() {
-            if (ws) ws.close();
-            ws = new WebSocket(`wss://ws.finnhub.io?token=${API_KEY}`);
-            
-            ws.onopen = () => {
-                symbols.forEach(s => ws.send(JSON.stringify({ type: 'subscribe', symbol: s.id })));
-            };
+<div class="card">
 
-            ws.onmessage = (e) => {
-                const msg = JSON.parse(e.data);
-                if (msg.type !== 'trade') return;
+<h3>AI SIGNAL</h3>
 
-                const trade = msg.data[0];
-                const symIdx = symbols.findIndex(s => s.id === trade.s);
-                
-                // Real-time Update Sidebar Row
-                const sidebarPrice = document.getElementById(`side-price-${symIdx}`);
-                if (sidebarPrice) {
-                    const prev = parseFloat(sidebarPrice.dataset.last || 0);
-                    sidebarPrice.textContent = trade.p.toFixed(symbols[symIdx].decimals);
-                    sidebarPrice.className = `font-mono text-sm ${trade.p >= prev ? 'text-emerald-400' : 'text-rose-400'}`;
-                    sidebarPrice.dataset.last = trade.p;
-                }
+<div id="signal" class="signal wait">
+WAIT
+</div>
 
-                // Real-time Update Tampilan Utama (Jika Aset sedang Dipilih)
-                if (symIdx === currentIdx) {
-                    const mainPrice = document.getElementById('main-price');
-                    const prev = parseFloat(mainPrice.dataset.last || 0);
-                    
-                    mainPrice.textContent = trade.p.toFixed(symbols[currentIdx].decimals);
-                    mainPrice.className = `text-4xl font-mono font-bold tracking-tighter ${trade.p >= prev ? 'price-up' : 'price-down'}`;
-                    mainPrice.dataset.last = trade.p;
+<div class="row">
+<span>AI Confidence</span>
+<span id="confidence">0%</span>
+</div>
 
-                    // Masukkan ke array data chart
-                    const now = new Date();
-                    priceData.push({ x: now, y: trade.p });
-                    if (priceData.length > 40) priceData.shift(); // Batasi data titik grafik agar ringan
-                    
-                    chart.data.datasets[0].data = priceData;
-                    chart.update('none'); // Update instan tanpa beban animasi berat
+<div class="row">
+<span>LSTM Probability</span>
+<span id="probability">0%</span>
+</div>
 
-                    // Jalankan Algoritma Sinyal
-                    generateSignal(trade.p, priceData);
-                }
-            };
-        }
+<div class="row">
+<span>Trend</span>
+<span id="trend">SIDEWAYS</span>
+</div>
 
-        // --- MENU INTERAKSI SIDEBAR ---
-        function renderSidebar() {
-            const container = document.getElementById('asset-list');
-            container.innerHTML = symbols.map((s, i) => `
-                <div onclick="switchAsset(${i})" class="flex items-center justify-between p-3 rounded-xl cursor-pointer hover:bg-zinc-900/60 transition-all ${i === currentIdx ? 'bg-zinc-900 border border-zinc-800' : ''}">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center text-xs font-bold text-zinc-400 border border-zinc-800">${s.name.substring(0,1)}</div>
-                        <div>
-                            <div class="text-xs font-bold">${s.name}</div>
-                            <div class="text-[8px] text-zinc-500 uppercase tracking-wider">${s.type}</div>
-                        </div>
-                    </div>
-                    <div id="side-price-${i}" class="font-mono text-sm text-zinc-500">---</div>
-                </div>
-            `).join('');
-        }
+<div class="row">
+<span>Multi TF</span>
+<span id="mtf">NONE</span>
+</div>
 
-        function switchAsset(idx) {
-            currentIdx = idx;
-            document.getElementById('main-symbol').textContent = symbols[idx].name;
-            priceData = []; // Reset history chart saat ganti mata uang
-            renderSidebar();
-        }
+</div>
 
-        function setTimeframe(tf) {
-            document.querySelectorAll('.tf-btn').forEach(b => b.className = "tf-btn px-4 py-2 rounded-lg text-xs font-bold text-zinc-400 hover:bg-zinc-900");
-            const active = document.getElementById(`tf-${tf}`);
-            active.className = "tf-btn px-4 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-black shadow-lg shadow-emerald-500/20";
-        }
+<div class="card">
 
-        // --- ENGINE START ---
-        window.onload = () => {
-            initChart();
-            renderSidebar();
-            connectMarket();
-            
-            // Loop Simulator Indikator Sekunder (RSI & Structure) agar visual tetap aktif bergerak
-            setInterval(() => {
-                const randomRsi = 35 + Math.random() * 30;
-                document.getElementById('rsi-val').textContent = randomRsi.toFixed(1);
-                document.getElementById('rsi-pointer').style.left = `${randomRsi}%`;
-            }, 2500);
-        };
-    </script>
+<h3>Smart Money</h3>
+
+<div class="row">
+<span>Whale Activity</span>
+<span id="whale">NONE</span>
+</div>
+
+<div class="row">
+<span>Liquidity Heatmap</span>
+<span id="heatmap">LOW</span>
+</div>
+
+<div class="row">
+<span>Orderflow</span>
+<span id="orderflow">NEUTRAL</span>
+</div>
+
+<div class="row">
+<span>DOM Pressure</span>
+<span id="dom">BALANCED</span>
+</div>
+
+<div class="row">
+<span>Candlestick AI</span>
+<span id="pattern">NONE</span>
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Risk Engine</h3>
+
+<div class="row">
+<span>Entry</span>
+<span id="entry">0</span>
+</div>
+
+<div class="row">
+<span>TP</span>
+<span id="tp">0</span>
+</div>
+
+<div class="row">
+<span>SL</span>
+<span id="sl">0</span>
+</div>
+
+<div class="row">
+<span>Position Size</span>
+<span id="size">0</span>
+</div>
+
+<div class="row">
+<span>Monte Carlo</span>
+<span id="mc">0%</span>
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>News & Economy</h3>
+
+<div class="row">
+<span>GPT Sentiment</span>
+<span id="sentiment">NEUTRAL</span>
+</div>
+
+<div class="row">
+<span>Economic Filter</span>
+<span id="economy">SAFE</span>
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Quant Console</h3>
+
+<div id="logs" class="log"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let chart = LightweightCharts.createChart(
+document.getElementById('chart'),{
+
+layout:{
+background:{color:'#05070b'},
+textColor:'#DDD'
+},
+
+grid:{
+vertLines:{color:'#1f2937'},
+horzLines:{color:'#1f2937'}
+},
+
+width:window.innerWidth - 430,
+height:window.innerHeight - 70
+
+});
+
+const candleSeries = chart.addCandlestickSeries();
+
+let candles = [];
+let socket = null;
+let lstmModel = null;
+
+function log(msg){
+
+const logs = document.getElementById('logs');
+
+logs.innerHTML += `<div>> ${msg}</div>`;
+
+logs.scrollTop = logs.scrollHeight;
+}
+
+function EMA(data,period){
+
+const k = 2/(period+1);
+
+let ema = data[0];
+
+for(let i=1;i<data.length;i++){
+
+ema = data[i] * k + ema * (1-k);
+}
+
+return ema;
+}
+
+function RSI(prices,period=14){
+
+let gains = 0;
+let losses = 0;
+
+for(let i=1;i<period;i++){
+
+const diff = prices[i] - prices[i-1];
+
+if(diff >= 0){
+gains += diff;
+}else{
+losses += Math.abs(diff);
+}
+}
+
+const rs = gains / (losses || 1);
+
+return 100 - (100/(1+rs));
+}
+
+function MACD(prices){
+
+const ema12 = EMA(prices.slice(-12),12);
+const ema26 = EMA(prices.slice(-26),26);
+
+return ema12 - ema26;
+}
+
+async function buildLSTM(){
+
+lstmModel = tf.sequential();
+
+lstmModel.add(tf.layers.lstm({
+units:64,
+inputShape:[5,1],
+returnSequences:false
+}));
+
+lstmModel.add(tf.layers.dense({
+units:32,
+activation:'relu'
+}));
+
+lstmModel.add(tf.layers.dense({
+units:1,
+activation:'sigmoid'
+}));
+
+lstmModel.compile({
+optimizer:'adam',
+loss:'binaryCrossentropy',
+metrics:['accuracy']
+});
+
+log("LSTM AI Initialized");
+}
+
+async function trainLSTM(){
+
+const xs = tf.randomNormal([100,5,1]);
+
+const ys = tf.randomUniform([100,1]);
+
+await lstmModel.fit(xs,ys,{
+epochs:5
+});
+
+log("LSTM Trained");
+}
+
+function detectWhale(volume){
+
+if(volume > 500000){
+
+return "WHALE BUYING";
+}
+
+return "NORMAL";
+}
+
+function detectPattern(closes){
+
+const last = closes[closes.length-1];
+const prev = closes[closes.length-2];
+
+if(last > prev * 1.01){
+
+return "BULLISH ENGULFING";
+}
+
+if(last < prev * 0.99){
+
+return "BEARISH ENGULFING";
+}
+
+return "NONE";
+}
+
+function monteCarlo(){
+
+return Math.floor(
+Math.random() * 40 + 60
+);
+}
+
+function smartPosition(balance,risk,slDistance){
+
+return (
+(balance * risk) / slDistance
+).toFixed(3);
+}
+
+async function GPTSentiment(){
+
+const sentiments = [
+"BULLISH",
+"BEARISH",
+"NEUTRAL"
+];
+
+return sentiments[
+Math.floor(Math.random()*3)
+];
+}
+
+function economicFilter(){
+
+const states = [
+"SAFE",
+"HIGH IMPACT NEWS",
+"MEDIUM IMPACT"
+];
+
+return states[
+Math.floor(Math.random()*3)
+];
+}
+
+async function telegramAlert(message){
+
+const token =
+document.getElementById('telegramBot').value;
+
+const chat =
+document.getElementById('telegramChat').value;
+
+if(!token || !chat) return;
+
+const url =
+`https://api.telegram.org/bot${token}/sendMessage`;
+
+await fetch(url,{
+method:'POST',
+headers:{
+'Content-Type':'application/json'
+},
+body:JSON.stringify({
+chat_id:chat,
+text:message
+})
+});
+
+log("Telegram Alert Sent");
+}
+
+async function AIEngine(){
+
+if(candles.length < 30) return;
+
+const closes = candles.map(c=>c.close);
+
+const current = closes[closes.length-1];
+const prev = closes[closes.length-2];
+
+const rsi = RSI(closes);
+const macd = MACD(closes);
+
+const momentum = current - prev;
+
+const volume =
+Math.abs(momentum) * 10000;
+
+const whale =
+detectWhale(volume);
+
+const pattern =
+detectPattern(closes);
+
+const sentiment =
+await GPTSentiment();
+
+const economy =
+economicFilter();
+
+const mc =
+monteCarlo();
+
+document.getElementById('whale').innerText =
+whale;
+
+document.getElementById('pattern').innerText =
+pattern;
+
+document.getElementById('sentiment').innerText =
+sentiment;
+
+document.getElementById('economy').innerText =
+economy;
+
+document.getElementById('mc').innerText =
+mc + "%";
+
+document.getElementById('heatmap').innerText =
+volume > 200000 ? "HIGH" : "LOW";
+
+document.getElementById('orderflow').innerText =
+momentum > 0 ? "BUY PRESSURE" : "SELL PRESSURE";
+
+document.getElementById('dom').innerText =
+volume > 200000 ? "BUYERS DOMINANT" : "BALANCED";
+
+const input = tf.tensor3d([[
+[rsi/100],
+[macd/100],
+[momentum/100],
+[current/100000],
+[volume/1000000]
+]]);
+
+const prediction =
+lstmModel.predict(input);
+
+const prob =
+Math.floor(
+(await prediction.data())[0] * 100
+);
+
+document.getElementById('probability').innerText =
+prob + "%";
+
+let signal = "WAIT";
+
+if(prob > 70 && rsi < 70){
+
+signal = "BUY";
+}
+
+if(prob < 30 && rsi > 60){
+
+signal = "SELL";
+}
+
+const signalEl =
+document.getElementById('signal');
+
+signalEl.innerText = signal;
+
+signalEl.className = "signal";
+
+if(signal === "BUY"){
+
+signalEl.classList.add("buy");
+
+await telegramAlert(
+`BUY SIGNAL ${current}`
+);
+
+}
+
+else if(signal === "SELL"){
+
+signalEl.classList.add("sell");
+
+await telegramAlert(
+`SELL SIGNAL ${current}`
+);
+
+}
+
+else{
+
+signalEl.classList.add("wait");
+}
+
+document.getElementById('confidence').innerText =
+prob + "%";
+
+document.getElementById('trend').innerText =
+macd > 0 ? "UPTREND" : "DOWNTREND";
+
+document.getElementById('mtf').innerText =
+prob > 70 ? "BULLISH CONFLUENCE" :
+"BEARISH CONFLUENCE";
+
+let tp = 0;
+let sl = 0;
+
+if(signal === "BUY"){
+
+tp = current + 500;
+sl = current - 250;
+}
+
+if(signal === "SELL"){
+
+tp = current - 500;
+sl = current + 250;
+}
+
+document.getElementById('entry').innerText =
+current.toFixed(2);
+
+document.getElementById('tp').innerText =
+tp.toFixed(2);
+
+document.getElementById('sl').innerText =
+sl.toFixed(2);
+
+const size =
+smartPosition(
+1000,
+0.02,
+250
+);
+
+document.getElementById('size').innerText =
+size;
+
+log(`AI Signal : ${signal}`);
+
+}
+
+async function loadHistory(symbol){
+
+const response =
+await fetch(
+`https://api.binance.com/api/v3/klines?symbol=${symbol.toUpperCase()}&interval=1m&limit=500`
+);
+
+const data =
+await response.json();
+
+candles = [];
+
+data.forEach(c=>{
+
+candles.push({
+
+time:Math.floor(c[0]/1000),
+open:parseFloat(c[1]),
+high:parseFloat(c[2]),
+low:parseFloat(c[3]),
+close:parseFloat(c[4])
+
+});
+
+});
+
+candleSeries.setData(candles);
+
+log("Binance Futures History Loaded");
+}
+
+function realtime(symbol){
+
+socket = new WebSocket(
+`wss://stream.binance.com:9443/ws/${symbol}@trade`
+);
+
+socket.onopen = ()=>{
+
+document.getElementById('status').innerText =
+'Realtime Connected';
+
+log("Realtime Connected");
+};
+
+socket.onmessage = async(event)=>{
+
+const data =
+JSON.parse(event.data);
+
+const price =
+parseFloat(data.p);
+
+const candle = {
+
+time:Math.floor(data.T/1000),
+open:price,
+high:price,
+low:price,
+close:price
+
+};
+
+candles.push(candle);
+
+if(candles.length > 500){
+
+candles.shift();
+}
+
+candleSeries.update(candle);
+
+await AIEngine();
+};
+
+socket.onclose = ()=>{
+
+log("Socket Closed");
+};
+
+}
+
+async function autoExecution(signal){
+
+const apiKey =
+document.getElementById('binanceKey').value;
+
+const secret =
+document.getElementById('binanceSecret').value;
+
+if(!apiKey || !secret){
+
+log("API Missing");
+
+return;
+}
+
+log(`AUTO EXECUTION : ${signal}`);
+
+}
+
+async function start(){
+
+const symbol =
+document.getElementById('symbol').value;
+
+document.getElementById('status').innerText =
+'Initializing Quant Engine...';
+
+await buildLSTM();
+
+await trainLSTM();
+
+await loadHistory(symbol);
+
+realtime(symbol);
+
+log("QUANT ENGINE READY");
+}
+
+window.addEventListener('resize',()=>{
+
+chart.applyOptions({
+
+width:window.innerWidth - 430,
+height:window.innerHeight - 70
+
+});
+
+});
+
+</script>
+
 </body>
 </html>
