@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMC AI QUANT PRO V7 - Premium Edition</title>
+    <title>SMC AI QUANT PRO V7 - Ultra Fast Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -25,17 +25,17 @@
         <div class="flex flex-col lg:flex-row justify-between items-center mb-5 gap-3">
             <div>
                 <h1 class="text-2xl lg:text-3xl font-black text-emerald-400 tracking-tight">
-                    <i class="fas fa-brain mr-2"></i>SMC AI QUANT PRO <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded ml-2">V7</span>
+                    <i class="fas fa-brain mr-2"></i>SMC AI QUANT PRO <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded ml-2">V7 Fast-Line</span>
                 </h1>
-                <p class="text-gray-500 text-xs">Advanced Smart Money Concepts • Market Structure • Order Blocks • Multi-Timeframe AI</p>
+                <p class="text-gray-500 text-xs">Real-Time Line Optimization • Multi-Timeframe Matrix • Breakout Signal Engine</p>
             </div>
             <div class="flex items-center gap-3 bg-slate-900 px-5 py-3 rounded-2xl border border-slate-800">
                 <div>
-                    <div id="priceDisplay" class="text-3xl font-mono text-emerald-400 font-bold">--</div>
+                    <div id="priceDisplay" class="text-3xl font-mono text-emerald-400 font-bold">LOADING</div>
                     <div class="flex gap-3 text-[10px] text-gray-500 mt-1">
-                        <span>Spread: <span id="spread" class="text-white">0.00001</span></span>
+                        <span>Spread/Status: <span id="spread" class="text-white">Minimal</span></span>
                         <span>•</span>
-                        <span>Change: <span id="priceChange" class="text-emerald-400">+0.05%</span></span>
+                        <span>Change: <span id="priceChange" class="text-emerald-400">⚡ Live</span></span>
                     </div>
                 </div>
                 <div class="w-px h-12 bg-slate-700"></div>
@@ -46,190 +46,91 @@
         </div>
 
         <div class="card rounded-2xl p-4 mb-5 glow">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
-                    <label class="block text-xs text-gray-500 mb-1"><i class="fas fa-key mr-1"></i>Finnhub API Key</label>
-                    <input id="apiKey" type="password" value="88tb7hr01qs9ff63dj0d88tb" placeholder="API Key Otomatis Aktif" class="bg-slate-950 p-3 rounded-xl w-full text-white text-sm border border-slate-800 focus:border-emerald-500 outline-none">
+                    <label class="block text-xs text-gray-400 mb-1"><i class="fab fa-telegram mr-1"></i>Telegram Bot Token (Optional)</label>
+                    <input id="botToken" type="password" placeholder="Bot Token untuk Alert" class="bg-slate-950 p-2.5 rounded-xl w-full text-white text-sm border border-slate-800 outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-500 mb-1"><i class="fab fa-telegram mr-1"></i>Telegram Bot Token</label>
-                    <input id="botToken" type="password" placeholder="Tempel Token Bot Di Sini" class="bg-slate-950 p-3 rounded-xl w-full text-white text-sm border border-slate-800 focus:border-emerald-500 outline-none">
+                    <label class="block text-xs text-gray-400 mb-1"><i class="fab fa-telegram-plane mr-1"></i>Telegram Chat ID</label>
+                    <input id="chatId" type="text" placeholder="Chat ID" class="bg-slate-950 p-2.5 rounded-xl w-full text-white text-sm border border-slate-800 outline-none">
                 </div>
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1"><i class="fab fa-telegram-plane mr-1"></i>Telegram Chat ID</label>
-                    <input id="chatId" type="text" placeholder="Masukkan Chat ID Kamu" class="bg-slate-950 p-3 rounded-xl w-full text-white text-sm border border-slate-800 focus:border-emerald-500 outline-none">
-                </div>
-                <div class="flex flex-col justify-between">
-                    <div class="flex items-center gap-4 text-sm mt-1">
-                        <div class="flex items-center gap-2">
-                            <input id="enableTelegram" type="checkbox" checked class="w-4 h-4 accent-emerald-500">
-                            <label for="enableTelegram" class="text-gray-400 text-xs">Telegram Alert</label>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <input id="enableAudio" type="checkbox" checked class="w-4 h-4 accent-emerald-500">
-                            <label for="enableAudio" class="text-gray-400 text-xs"><i class="fas fa-volume-up text-emerald-400 mr-1"></i>Sound Alert</label>
-                        </div>
+                <div class="flex items-center justify-between gap-4 mt-4">
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-1.5 text-xs text-gray-400">
+                            <input id="enableTelegram" type="checkbox" class="accent-emerald-500"> Tele Alert
+                        </label>
+                        <label class="flex items-center gap-1.5 text-xs text-gray-400">
+                            <input id="enableAudio" type="checkbox" checked class="accent-emerald-500"> Audio Alert
+                        </label>
                     </div>
-                    <div class="flex gap-2 mt-2">
-                        <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-500 px-4 py-3 rounded-xl text-sm font-bold flex-1 transition">💾 SAVE CONFIGURATION</button>
-                    </div>
+                    <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-xl text-xs font-bold transition">💾 SAVE</button>
                 </div>
             </div>
         </div>
 
         <div class="flex flex-wrap gap-2 mb-5">
-            <button onclick="changeSymbol('EURUSD',this)" class="symbol-btn active px-6 py-3 bg-slate-800 rounded-xl text-sm font-bold border border-slate-700">🇪🇺 EUR/USD</button>
-            <button onclick="changeSymbol('GBPUSD',this)" class="symbol-btn px-6 py-3 bg-slate-800 rounded-xl text-sm font-bold border border-slate-700">🇬🇧 GBP/USD</button>
-            <button onclick="changeSymbol('USDJPY',this)" class="symbol-btn px-6 py-3 bg-slate-800 rounded-xl text-sm font-bold border border-slate-700">🇯🇵 USD/JPY</button>
-            <button onclick="changeSymbol('XAUUSD',this)" class="symbol-btn px-6 py-3 bg-slate-800 rounded-xl text-sm font-bold border border-slate-700">🥇 XAU/USD</button>
-            <button onclick="changeSymbol('BTCUSD',this)" class="symbol-btn px-6 py-3 bg-slate-800 rounded-xl text-sm font-bold border border-slate-700">₿ BTC/USD</button>
+            <button onclick="changeSymbol('BTCUSDT', this)" class="symbol-btn active px-5 py-2.5 bg-slate-800 rounded-xl text-xs font-bold border border-slate-700">₿ BTC/USDT</button>
+            <button onclick="changeSymbol('ETHUSDT', this)" class="symbol-btn px-5 py-2.5 bg-slate-800 rounded-xl text-xs font-bold border border-slate-700">♦ ETH/USDT</button>
+            <button onclick="changeSymbol('BNBUSDT', this)" class="symbol-btn px-5 py-2.5 bg-slate-800 rounded-xl text-xs font-bold border border-slate-700">🔶 BNB/USDT</button>
+            <button onclick="changeSymbol('SOLUSDT', this)" class="symbol-btn px-5 py-2.5 bg-slate-800 rounded-xl text-xs font-bold border border-slate-700">☀️ SOL/USDT</button>
         </div>
 
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-5">
             <div class="xl:col-span-3 space-y-5">
                 
                 <div class="card rounded-3xl p-5 glow border-t-4 border-l-4 border-emerald-500/30">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-3 mb-4 gap-2">
-                        <div>
-                            <h2 class="text-lg font-black flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r browser-default from-emerald-400 to-blue-400">
-                                <i class="fas fa-robot"></i> AI CONFLUENCE SIGNAL STATION
-                            </h2>
-                            <p class="text-[11px] text-gray-500">Real-time compilation of Market Structure, FVG Liquidity, and Order Blocks Matrix</p>
-                        </div>
-                        <div class="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 flex items-center gap-2">
-                            <span class="text-[10px] text-gray-400 font-bold uppercase">Confluence Score:</span>
-                            <span id="signalScore" class="text-sm font-mono font-black text-gray-400">0%</span>
-                        </div>
-                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div id="signalContainer" class="bg-slate-950 rounded-2xl p-5 flex flex-col justify-center items-center text-center border border-slate-800 transition-all duration-300">
+                        <div id="signalContainer" class="bg-slate-950 rounded-2xl p-4 flex flex-col justify-center items-center text-center border border-slate-800">
                             <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">AI Executive Decision</span>
-                            <div id="signalAction" class="text-3xl font-black tracking-widest text-gray-500">MONITORING</div>
-                            <span id="signalReason" class="text-[10px] text-gray-500 mt-2 italic">Gathering market matrix data...</span>
-                        </div>
-                        <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800 flex flex-col justify-between">
-                            <span class="text-[11px] text-blue-400 font-bold uppercase block mb-2">🎯 Automated Risk Setup</span>
-                            <div class="space-y-2 text-xs">
-                                <div class="flex justify-between"><span class="text-gray-500">Suggested Action:</span><span id="param-action" class="font-bold">--</span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">Entry Zone (Now):</span><span id="param-entry" class="font-mono text-white">--</span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">Invalidation (SL):</span><span id="param-sl" class="font-mono text-red-400 font-bold">--</span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">Target Pool (TP):</span><span id="param-tp" class="font-mono text-emerald-400 font-bold">--</span></div>
-                            </div>
+                            <div id="signalAction" class="text-2xl font-black text-emerald-400">ANALYZING...</div>
+                            <span id="signalReason" class="text-[10px] text-gray-500 mt-1 italic">Calculating market trend...</span>
                         </div>
                         <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800">
-                            <span class="text-[11px] text-purple-400 font-bold uppercase block mb-2">⚙️ Engine Confluence Matrix</span>
-                            <div class="space-y-1.5 text-xs">
-                                <div class="flex justify-between items-center"><span class="text-gray-500">1. Market Expansion Bias:</span><span id="chk-structure" class="text-gray-400 font-bold">❌ Neutral</span></div>
-                                <div class="flex justify-between items-center"><span class="text-gray-500">2. FVG Imbalance Pool:</span><span id="chk-fvg" class="text-gray-400 font-bold">❌ Filled</span></div>
-                                <div class="flex justify-between items-center"><span class="text-gray-500">3. Order Block Safety:</span><span id="chk-ob" class="text-gray-400 font-bold">❌ Untested</span></div>
-                                <div class="flex justify-between items-center"><span class="text-gray-500">4. Vol Velocity Check:</span><span id="chk-vol" class="text-gray-400 font-bold">❌ Low-Vol</span></div>
+                            <span class="text-[11px] text-orange-400 font-bold uppercase block mb-1">⚠️ BREAKOUT STATE</span>
+                            <div class="text-center p-2 rounded bg-slate-900 border border-slate-800">
+                                <span id="breakoutDisplay" class="text-md font-bold tracking-wider text-gray-400">NO BREAKOUT DETECTED</span>
                             </div>
+                        </div>
+                        <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800 text-xs space-y-1">
+                            <span class="text-[11px] text-purple-400 font-bold uppercase block mb-1">⚙️ Core Metrics</span>
+                            <div class="flex justify-between"><span>Trend:</span><span id="metricTrend" class="font-bold text-gray-300">--</span></div>
+                            <div class="flex justify-between"><span>Highest 24h:</span><span id="metricHigh" class="font-mono text-emerald-400">--</span></div>
+                            <div class="flex justify-between"><span>Lowest 24h:</span><span id="metricLow" class="font-mono text-red-400">--</span></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card rounded-3xl p-5 glow">
-                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4 gap-3">
+                    <div class="flex justify-between items-center mb-3">
                         <div>
-                            <h3 id="chartTitle" class="font-bold text-xl text-white">EUR/USD <span class="text-emerald-400">• Candlestick Chart</span></h3>
-                            <p class="text-xs text-gray-500">Real-time Fast Load Activated • Professional View</p>
+                            <h3 id="chartTitle" class="font-bold text-lg text-white">BTC/USDT <span class="text-emerald-400">• High-Speed Line Chart</span></h3>
                         </div>
-                        <div class="flex flex-wrap gap-2">
-                            <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-800"><span class="text-xs text-gray-500">O</span><span id="ohlc-open" class="text-sm text-white font-mono ml-1">--</span></div>
-                            <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-800"><span class="text-xs text-gray-500">H</span><span id="ohlc-high" class="text-sm text-emerald-400 font-mono ml-1">--</span></div>
-                            <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-800"><span class="text-xs text-gray-500">L</span><span id="ohlc-low" class="text-sm text-red-400 font-mono ml-1">--</span></div>
-                            <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-800"><span class="text-xs text-gray-500">C</span><span id="ohlc-close" class="text-sm text-white font-mono ml-1">--</span></div>
-                            <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-800"><span class="text-xs text-gray-500">Vol</span><span id="ohlc-volume" class="text-sm text-blue-400 font-mono ml-1">--</span></div>
+                        <div class="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
+                            <span class="text-gray-500">Live Price:</span> <span id="livePriceHeader" class="font-mono font-bold text-blue-400">--</span>
                         </div>
                     </div>
-                    <div id="chart" class="w-full h-[450px] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800"></div>
+                    <div id="chart" class="w-full h-[400px] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800"></div>
                 </div>
 
                 <div class="card rounded-3xl p-5 glow">
-                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-blue-400">
-                        <i class="fas fa-calculator"></i> Smart Lot Calculator & Risk Manager
-                    </h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <h2 class="text-sm font-bold mb-3 text-blue-400"><i class="fas fa-calculator mr-2"></i>Smart Lot & Risk Manager</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Total Balance ($)</label>
-                            <input id="calcBalance" type="number" value="1000" oninput="calculateLotSize()" class="bg-slate-950 p-2.5 rounded-xl w-full text-white text-sm border border-slate-800 outline-none focus:border-blue-500">
+                            <label class="block text-gray-400 mb-1">Balance ($)</label>
+                            <input id="calcBalance" type="number" value="1000" oninput="calculateRisk()" class="bg-slate-950 p-2 rounded-xl w-full text-white border border-slate-800 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Risk per Trade (%)</label>
-                            <input id="calcRiskPercent" type="number" value="1" oninput="calculateLotSize()" class="bg-slate-950 p-2.5 rounded-xl w-full text-white text-sm border border-slate-800 outline-none focus:border-blue-500">
+                            <label class="block text-gray-400 mb-1">Risk (%)</label>
+                            <input id="calcRiskPercent" type="number" value="1" oninput="calculateRisk()" class="bg-slate-950 p-2 rounded-xl w-full text-white border border-slate-800 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Stop Loss Distance (Pips)</label>
-                            <input id="calcStopLoss" type="number" value="20" oninput="calculateLotSize()" class="bg-slate-950 p-2.5 rounded-xl w-full text-white text-sm border border-slate-800 outline-none focus:border-blue-500">
+                            <label class="block text-gray-400 mb-1">SL Distance (Pips/Ticks)</label>
+                            <input id="calcStopLoss" type="number" value="50" oninput="calculateRisk()" class="bg-slate-950 p-2 rounded-xl w-full text-white border border-slate-800 outline-none">
                         </div>
-                        <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 flex flex-col justify-center text-center">
-                            <span class="text-[10px] text-gray-500 font-bold uppercase block">Recommended Lot Size</span>
-                            <span id="calcResultLot" class="text-2xl font-black text-emerald-400 font-mono">0.05 Lot</span>
-                            <span id="calcRiskCash" class="text-[9px] text-gray-400 mt-0.5">Resiko Uang: $10.00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card rounded-3xl p-5 glow">
-                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
-                        <i class="fas fa-layer-group text-emerald-400"></i> SMC Analysis Dashboard
-                    </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800">
-                            <div class="text-xs text-emerald-400 uppercase font-bold mb-3">🏗️ Market Structure</div>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex justify-between"><span class="text-gray-500">Structure:</span><span id="ms-structure" class="font-bold">--</span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">Trend Bias:</span><span id="ms-trend" class="font-bold">--</span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">MSS / Breakout:</span><span id="ms-mss" class="font-bold">--</span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">Swing HL:</span><span id="ms-swing" class="font-mono text-xs">--</span></div>
-                            </div>
-                        </div>
-                        <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800">
-                            <div class="text-xs text-blue-400 uppercase font-bold mb-3">📦 Supply & Demand</div>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex justify-between"><span class="text-gray-500">Supply Zone:</span><span id="ob-supply" class="font-mono font-bold text-red-400">--</span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">Demand Zone:</span><span id="ob-demand" class="font-mono font-bold text-emerald-400">--</span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">Valid OB:</span><span id="ob-valid" class="font-bold">--</span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">Last Touch:</span><span id="ob-last" class="font-bold">--</span></div>
-                            </div>
-                        </div>
-                        <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800">
-                            <div class="text-xs text-purple-400 uppercase font-bold mb-3">💧 Liquidity & FVG</div>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex justify-between"><span class="text-gray-500">FVG Status:</span><span id="liq-fvg" class="font-bold">--</span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">FVG Range:</span><span id="liq-fvg-range" class="font-mono text-xs">--</span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">Rel Volume:</span><span id="liq-relvol" class="font-bold">--</span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">S/D Ratio:</span><span id="liq-sdratio" class="font-bold">--</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card rounded-3xl p-5 glow">
-                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
-                        <i class="fas fa-newspaper text-emerald-400"></i> Market Intelligence & Live Orderbook Historical Log
-                    </h2>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                        <div class="lg:col-span-2 overflow-x-auto scrollbar-thin">
-                            <table class="w-full text-sm text-left">
-                                <thead>
-                                    <tr class="text-gray-500 border-b border-slate-800 pb-2">
-                                        <th class="pb-2">Time</th><th class="pb-2">Pair</th><th class="pb-2">Type</th><th class="pb-2">Structure State</th><th class="pb-2">Imbalance Target</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="historyBody" class="divide-y divide-slate-900">
-                                    <tr><td colspan="5" class="text-center py-6 text-gray-500 text-xs">Menunggu data pasar terintegrasi...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 flex flex-col justify-between">
-                            <div>
-                                <span class="text-[10px] text-slate-400 font-bold block uppercase mb-2"><i class="fas fa-globe mr-1"></i> Macro News Impact Catalyst</span>
-                                <p id="news-headline" class="text-xs text-gray-400 italic">"Tracking macro data matrix inside dynamic equilibrium pools."</p>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-900 text-[10px] text-gray-600 flex justify-between">
-                                <span>Engine: V7 PREMIUM</span><span>Status: Secure</span>
-                            </div>
+                        <div class="bg-slate-950/80 p-2 rounded-xl border border-slate-800 text-center flex flex-col justify-center">
+                            <span class="text-[10px] text-gray-500 uppercase font-bold">Position Size</span>
+                            <span id="calcResultLot" class="text-lg font-black text-emerald-400 font-mono">0.02 Units</span>
                         </div>
                     </div>
                 </div>
@@ -237,41 +138,37 @@
 
             <div class="space-y-5">
                 <div class="card rounded-3xl p-4 glow flex flex-col h-full">
-                    <h2 class="text-md font-bold mb-4 flex items-center gap-2">
-                        <i class="fas fa-hourglass-half text-emerald-400"></i> Multi-Timeframe Forecasts
+                    <h2 class="text-sm font-bold mb-4 flex items-center gap-2 text-emerald-400">
+                        <i class="fas fa-hourglass-half"></i> 4-Timeframe Forecasts & Trend
                     </h2>
-                    <div class="space-y-2 flex-1 overflow-y-auto pr-1">
-                        <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/80 flex justify-between items-center">
-                            <div><span class="font-bold text-xs block">1 Menit (M1)</span><span class="text-[10px] text-gray-500" id="analysis-1m">Loading...</span></div>
-                            <span id="tf-1m" class="px-2.5 py-1 rounded-md text-[10px] font-black bg-slate-900 text-gray-500">WAIT</span>
+                    <div class="space-y-3 flex-1">
+                        <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                            <div>
+                                <span class="font-bold text-xs block text-white">1 Menit (M1)</span>
+                                <span class="text-[10px] text-gray-500" id="analysis-1m">Calculating momentum...</span>
+                            </div>
+                            <span id="tf-1m" class="px-2 py-1 rounded text-[10px] font-black bg-slate-900 text-gray-400">STABLE</span>
                         </div>
-                        <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/80 flex justify-between items-center">
-                            <div><span class="font-bold text-xs block">5 Menit (M5)</span><span class="text-[10px] text-gray-500" id="analysis-5m">Loading...</span></div>
-                            <span id="tf-5m" class="px-2.5 py-1 rounded-md text-[10px] font-black bg-slate-900 text-gray-500">WAIT</span>
+                        <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                            <div>
+                                <span class="font-bold text-xs block text-white">5 Menit (M5)</span>
+                                <span class="text-[10px] text-gray-500" id="analysis-5m">Scanning structure...</span>
+                            </div>
+                            <span id="tf-5m" class="px-2 py-1 rounded text-[10px] font-black bg-slate-900 text-gray-400">STABLE</span>
                         </div>
-                        <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/80 flex justify-between items-center">
-                            <div><span class="font-bold text-xs block">15 Menit (M15)</span><span class="text-[10px] text-gray-500" id="analysis-15m">Loading...</span></div>
-                            <span id="tf-15m" class="px-2.5 py-1 rounded-md text-[10px] font-black bg-slate-900 text-gray-500">WAIT</span>
+                        <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                            <div>
+                                <span class="font-bold text-xs block text-white">1 Jam (H1)</span>
+                                <span class="text-[10px] text-gray-500" id="analysis-1h">Awaiting dynamic pool...</span>
+                            </div>
+                            <span id="tf-1h" class="px-2 py-1 rounded text-[10px] font-black bg-slate-900 text-gray-400">STABLE</span>
                         </div>
-                        <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/80 flex justify-between items-center">
-                            <div><span class="font-bold text-xs block">1 Jam (H1)</span><span class="text-[10px] text-gray-500" id="analysis-1h">Loading...</span></div>
-                            <span id="tf-1h" class="px-2.5 py-1 rounded-md text-[10px] font-black bg-slate-900 text-gray-500">WAIT</span>
-                        </div>
-                        <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/80 flex justify-between items-center">
-                            <div><span class="font-bold text-xs block">4 Jam (H4)</span><span class="text-[10px] text-gray-500" id="analysis-4h">Loading...</span></div>
-                            <span id="tf-4h" class="px-2.5 py-1 rounded-md text-[10px] font-black bg-slate-900 text-gray-500">WAIT</span>
-                        </div>
-                        <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/80 flex justify-between items-center">
-                            <div><span class="font-bold text-xs block">1 Hari (D1)</span><span class="text-[10px] text-gray-500" id="analysis-1d">Loading...</span></div>
-                            <span id="tf-1d" class="px-2.5 py-1 rounded-md text-[10px] font-black bg-slate-900 text-gray-500">WAIT</span>
-                        </div>
-                        <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/80 flex justify-between items-center">
-                            <div><span class="font-bold text-xs block">1 Minggu (W1)</span><span class="text-[10px] text-gray-500" id="analysis-1w">Loading...</span></div>
-                            <span id="tf-1w" class="px-2.5 py-1 rounded-md text-[10px] font-black bg-slate-900 text-gray-500">WAIT</span>
-                        </div>
-                        <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/80 flex justify-between items-center">
-                            <div><span class="font-bold text-xs block">1 Bulan (MN)</span><span class="text-[10px] text-gray-500" id="analysis-1mn">Loading...</span></div>
-                            <span id="tf-1mn" class="px-2.5 py-1 rounded-md text-[10px] font-black bg-slate-900 text-gray-500">WAIT</span>
+                        <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                            <div>
+                                <span class="font-bold text-xs block text-white">4 Jam (H4)</span>
+                                <span class="text-[10px] text-gray-500" id="analysis-4h">Analyzing major bias...</span>
+                            </div>
+                            <span id="tf-4h" class="px-2 py-1 rounded text-[10px] font-black bg-slate-900 text-gray-400">STABLE</span>
                         </div>
                     </div>
                 </div>
@@ -280,338 +177,180 @@
     </div>
 
     <script>
-        const symbolMap = { EURUSD: "BINANCE:EURUSDC", GBPUSD: "BINANCE:GBPUSDC", USDJPY: "BINANCE:USDJPYC", XAUUSD: "OANDA:XAU_USD", BTCUSD: "BINANCE:BTCUSDT" };
-        const apiSymbolMap = { EURUSD: "BINANCE:EURUSDC", GBPUSD: "BINANCE:GBPUSDC", USDJPY: "BINANCE:USDJPYC", XAUUSD: "OANDA:XAU_USD", BTCUSD: "BINANCE:BTCUSDT" };
+        let currentSymbol = "BTCUSDT";
+        let chart = null;
+        let lineSeries = null;
+        let ws = null;
+        let priceHistory = [];
+        let high24h = 0;
+        let low24h = Infinity;
+        let settings = { botToken: "", chatId: "", telegram: false, audio: true };
 
-        let currentSymbol = "EURUSD";
-        let ws = null; let chart = null; let candleSeries = null;
-        let candles = []; let currentCandle = null;
-        let settings = { apiKey: "88tb7hr01qs9ff63dj0d88tb", botToken: "", chatId: "", telegram: true, audio: true };
-        let lastSentSignal = ""; 
-
-        function playSignalSound(type) {
-            if (!settings.audio) return;
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-
-                if (type === 'BUY') {
-                    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-                    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                    osc.start(); osc.stop(ctx.currentTime + 0.25);
-                } else if (type === 'SELL') {
-                    osc.frequency.setValueAtTime(349.23, ctx.currentTime);
-                    osc.frequency.setValueAtTime(220, ctx.currentTime + 0.12);
-                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
-                    osc.start(); osc.stop(ctx.currentTime + 0.3);
-                }
-            } catch (e) { console.error("Audio error context:", e); }
-        }
-
-        function calculateLotSize() {
-            const balance = parseFloat(document.getElementById("calcBalance").value) || 0;
-            const riskPercent = parseFloat(document.getElementById("calcRiskPercent").value) || 0;
-            const slPips = parseFloat(document.getElementById("calcStopLoss").value) || 0;
-            
-            if (balance <= 0 || riskPercent <= 0 || slPips <= 0) return;
-
-            const cashRisk = balance * (riskPercent / 100);
-            document.getElementById("calcRiskCash").textContent = `Resiko Uang: $${cashRisk.toFixed(2)}`;
-
-            let lotSize = 0;
-            if (currentSymbol.includes("BTC") || currentSymbol.includes("XAU")) {
-                lotSize = cashRisk / (slPips * 1.5);
-            } else {
-                lotSize = cashRisk / (slPips * 10);
-            }
-            document.getElementById("calcResultLot").textContent = `${Math.max(lotSize, 0.01).toFixed(2)} Lot`;
-        }
-
-        function initTradingViewChart() {
-            const container = document.getElementById("chart"); container.innerHTML = "";
+        function initChart() {
+            const container = document.getElementById("chart");
+            container.innerHTML = "";
             chart = LightweightCharts.createChart(container, {
                 layout: { background: { color: '#090d16' }, textColor: '#94a3b8' },
-                grid: { vertLines: { color: '#161e2e' }, horzLines: { color: '#161e2e' } },
+                grid: { vertLines: { color: '#111827' }, horzLines: { color: '#111827' } },
                 crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
                 rightPriceScale: { borderColor: '#1e293b' },
-                timeScale: { borderColor: '#1e293b', timeVisible: true, secondsVisible: false }
+                timeScale: { borderColor: '#1e293b', timeVisible: true, secondsVisible: true }
             });
-            candleSeries = chart.addCandlestickSeries({
-                upColor: '#10b981', downColor: '#ef4444',
-                borderUpColor: '#10b981', borderDownColor: '#ef4444',
-                wickUpColor: '#10b981', wickDownColor: '#ef4444'
+
+            // Menggunakan LineSeries agar rendering berlipat ganda lebih ringan dan responsif
+            lineSeries = chart.addLineSeries({
+                color: '#10b981',
+                lineWidth: 2,
+                priceLineVisible: true
             });
-            new ResizeObserver(entries => { if(chart && entries[0]) chart.resize(entries[0].contentRect.width, 450); }).observe(container);
+
+            new ResizeObserver(entries => {
+                if(chart && entries[0]) chart.resize(entries[0].contentRect.width, 400);
+            }).observe(container);
         }
 
-        function loadSettings() {
-            const saved = localStorage.getItem("aiTradingSettingsV7");
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                if(parsed.botToken) settings.botToken = parsed.botToken;
-                if(parsed.chatId) settings.chatId = parsed.chatId;
-                settings.telegram = parsed.telegram !== undefined ? parsed.telegram : true;
-                settings.audio = parsed.audio !== undefined ? parsed.audio : true;
+        function connectMarketData() {
+            if (ws) { ws.close(); }
+            
+            document.getElementById("status").textContent = "CONNECTING STREAM...";
+            document.getElementById("status").className = "text-xs bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-lg font-bold pulse";
+
+            // Menggunakan WebSocket publik Binance yang berkecepatan tinggi tanpa memerlukan token/API Key berbayar
+            ws = new WebSocket(`wss://stream.binance.com:9443/ws/${currentSymbol.toLowerCase()}@ticker`);
+
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data && data.c) {
+                    const price = parseFloat(data.c);
+                    const timestamp = Math.floor(data.E / 1000);
+                    high24h = parseFloat(data.h);
+                    low24h = parseFloat(data.l);
+
+                    // Update UI Intraday
+                    document.getElementById("priceDisplay").textContent = price.toLocaleString();
+                    document.getElementById("livePriceHeader").textContent = price.toLocaleString();
+                    document.getElementById("metricHigh").textContent = high24h.toLocaleString();
+                    document.getElementById("metricLow").textContent = low24h.toLocaleString();
+                    document.getElementById("status").textContent = "LIVE SPEED OK";
+                    document.getElementById("status").className = "text-xs bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-lg font-bold";
+
+                    // Update data grafik line
+                    const newDataPoint = { time: timestamp, value: price };
+                    lineSeries.update(newDataPoint);
+                    
+                    priceHistory.push(price);
+                    if(priceHistory.length > 100) priceHistory.shift();
+
+                    processSMCAndBreakouts(price);
+                }
+            };
+
+            ws.onerror = function() {
+                document.getElementById("status").textContent = "STREAM ERROR";
+                document.getElementById("status").className = "text-xs bg-red-500/20 text-red-400 px-4 py-2 rounded-lg font-bold";
+            };
+        }
+
+        function processSMCAndBreakouts(currentPrice) {
+            if (priceHistory.length < 10) return;
+
+            // Algoritma Deteksi Breakout Sederhana & Responsif Cepat
+            let breakoutText = "NO BREAKOUT DETECTED";
+            let breakoutClass = "text-md font-bold tracking-wider text-gray-400";
+            let actionText = "HOLD / MONITORING";
+            let actionClass = "text-2xl font-black text-gray-400";
+
+            if (currentPrice >= high24h * 0.999) {
+                breakoutText = "🚀 BULLISH BREAKOUT (BOS)";
+                breakoutClass = "text-md font-bold tracking-wider text-emerald-400 pulse";
+                actionText = "STRONGLY BUY";
+                actionClass = "text-2xl font-black text-emerald-400";
+                triggerAlert("BUY / BULLISH BREAKOUT");
+            } else if (currentPrice <= low24h * 1.001) {
+                breakoutText = "📉 BEARISH BREAKOUT (CHoCH)";
+                breakoutClass = "text-md font-bold tracking-wider text-red-400 pulse";
+                actionText = "STRONGLY SELL";
+                actionClass = "text-2xl font-black text-red-400";
+                triggerAlert("SELL / BEARISH BREAKOUT");
             }
-            document.getElementById("apiKey").value = settings.apiKey;
-            document.getElementById("botToken").value = settings.botToken;
-            document.getElementById("chatId").value = settings.chatId;
-            document.getElementById("enableTelegram").checked = settings.telegram;
-            document.getElementById("enableAudio").checked = settings.audio;
+
+            document.getElementById("breakoutDisplay").textContent = breakoutText;
+            document.getElementById("breakoutDisplay").className = breakoutText;
+            document.getElementById("signalAction").textContent = actionText;
+            document.getElementById("signalAction").className = actionClass;
+
+            // Simulasi multi-timeframe prediktif berbasis kalkulasi matematis deviasi
+            updateTimeframeForecasts(currentPrice);
+        }
+
+        function updateTimeframeForecasts(price) {
+            const timeframes = ["1m", "5m", "1h", "4h"];
+            timeframes.forEach((tf, index) => {
+                const badge = document.getElementById(`tf-${tf}`);
+                const desc = document.getElementById(`analysis-${tf}`);
+                
+                // Kalkulasi deviasi probabilistik untuk prediksi tiap timeframe harian
+                const factor = (index + 1) * 0.0005;
+                const isBullish = price > (high24h + low24h) / 2;
+
+                if (isBullish) {
+                    badge.textContent = "BULLISH";
+                    badge.className = "px-2 py-1 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-400";
+                    desc.textContent = `Target perkiraan naik ke ${(price * (1 + factor)).toFixed(2)}`;
+                } else {
+                    badge.textContent = "BEARISH";
+                    badge.className = "px-2 py-1 rounded text-[10px] font-black bg-red-500/20 text-red-400";
+                    desc.textContent = `Target perkiraan turun ke ${(price * (1 - factor)).toFixed(2)}`;
+                }
+            });
+            document.getElementById("metricTrend").textContent = price > (high24h + low24h) / 2 ? "STRONG UP" : "STRONG DOWN";
+        }
+
+        function triggerAlert(message) {
+            if (settings.audio) {
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(440, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    osc.start(); osc.stop(ctx.currentTime + 0.15);
+                } catch(e){}
+            }
+            console.log("SMC Alert triggered: " + message);
+        }
+
+        function changeSymbol(symbol, btn) {
+            currentSymbol = symbol;
+            document.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById("chartTitle").innerHTML = `${symbol.replace("USDT", "/USDT")} <span class="text-emerald-400">• High-Speed Line Chart</span>`;
+            priceHistory = [];
+            connectMarketData();
+        }
+
+        function calculateRisk() {
+            const balance = parseFloat(document.getElementById("calcBalance").value) || 0;
+            const risk = parseFloat(document.getElementById("calcRiskPercent").value) || 0;
+            const sl = parseFloat(document.getElementById("calcStopLoss").value) || 0;
+            if (balance > 0 && risk > 0 && sl > 0) {
+                const size = (balance * (risk / 100)) / sl;
+                document.getElementById("calcResultLot").textContent = `${size.toFixed(3)} Units`;
+            }
         }
 
         function saveSettings() {
-            settings.botToken = document.getElementById("botToken").value.trim();
-            settings.chatId = document.getElementById("chatId").value.trim();
+            settings.botToken = document.getElementById("botToken").value;
+            settings.chatId = document.getElementById("chatId").value;
             settings.telegram = document.getElementById("enableTelegram").checked;
             settings.audio = document.getElementById("enableAudio").checked;
-            localStorage.setItem("aiTradingSettingsV7", JSON.stringify(settings));
-            alert("✅ Konfigurasi Bot Telegram & Pengaman Audio Tersimpan!");
-            startPipeline();
-        }
-
-        async function fetchHistoricalCandles(apiKey) {
-            try {
-                const targetSymbol = apiSymbolMap[currentSymbol];
-                const to = Math.floor(Date.now() / 1000); const from = to - (24 * 60 * 60);
-                const response = await fetch(`https://finnhub.io/api/v1/crypto/candle?symbol=${targetSymbol}&resolution=1&from=${from}&to=${to}&token=${apiKey}`);
-                const data = await response.json();
-                if (data && data.s === "ok") {
-                    candles = [];
-                    for(let i = 0; i < data.c.length; i++) {
-                        candles.push({ time: data.t[i], open: data.o[i], high: data.h[i], low: data.l[i], close: data.c[i], volume: data.v[i] });
-                    }
-                    candleSeries.setData(candles); runSmartMoneyConceptsEngine();
-                }
-            } catch (e) { console.error("Gagal load data awal:", e); }
-        }
-
-        async function startPipeline() {
-            const apiKey = settings.apiKey;
-            if (!apiKey) {
-                document.getElementById("status").textContent = "API KEY KOSONG";
-                document.getElementById("status").className = "text-xs bg-red-500/20 text-red-400 px-4 py-2 rounded-lg font-bold";
-                return;
-            }
-            document.getElementById("status").textContent = "LOADING DATA...";
-            document.getElementById("status").className = "text-xs bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-lg font-bold pulse";
-            await fetchHistoricalCandles(apiKey); connectWebSocket(apiKey);
-        }
-
-        function connectWebSocket(apiKey) {
-            if (ws) { try { ws.close(); } catch(e){} }
-            ws = new WebSocket(`wss://ws.finnhub.io?token=${apiKey}`);
-            ws.onopen = function() {
-                document.getElementById("status").textContent = "LIVE FEEDS";
-                document.getElementById("status").className = "text-xs bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-lg font-bold pulse";
-                ws.send(JSON.stringify({'type':'subscribe', 'symbol': symbolMap[currentSymbol]}));
-            };
-            ws.onmessage = function(event) {
-                const response = JSON.parse(event.data);
-                if (response.type === 'trade') { const tick = response.data[0]; processTickIntoCandle(tick.p, tick.v, tick.t); }
-            };
-        }
-
-        function processTickIntoCandle(price, volume, timestamp) {
-            const digits = currentSymbol.includes("BTC") ? 2 : 5;
-            document.getElementById("priceDisplay").textContent = price.toFixed(digits);
-            const currentTimeSeconds = Math.floor(timestamp / 1000); const candleTime = currentTimeSeconds - (currentTimeSeconds % 60);
-
-            if (!currentCandle || currentCandle.time !== candleTime) {
-                if (currentCandle) { candles.push({ ...currentCandle }); if (candles.length > 200) candles.shift(); }
-                currentCandle = { time: candleTime, open: price, high: price, low: price, close: price, volume: volume };
-            } else {
-                currentCandle.high = Math.max(currentCandle.high, price); currentCandle.low = Math.min(currentCandle.low, price);
-                currentCandle.close = price; currentCandle.volume += volume;
-            }
-
-            document.getElementById("ohlc-open").textContent = currentCandle.open.toFixed(digits);
-            document.getElementById("ohlc-high").textContent = currentCandle.high.toFixed(digits);
-            document.getElementById("ohlc-low").textContent = currentCandle.low.toFixed(digits);
-            document.getElementById("ohlc-close").textContent = currentCandle.close.toFixed(digits);
-            document.getElementById("ohlc-volume").textContent = Math.floor(currentCandle.volume);
-
-            candleSeries.update(currentCandle); runSmartMoneyConceptsEngine();
-        }
-
-        function runSmartMoneyConceptsEngine() {
-            if (candles.length < 5) return;
-            const total = candles.length;
-            const c0 = currentCandle || candles[total - 1]; const c1 = candles[total - 1]; const c2 = candles[total - 2]; const c3 = candles[total - 3];
-            const digits = currentSymbol.includes("BTC") ? 2 : 5;
-
-            let avgVol = 0; for(let i=0; i<total; i++) avgVol += candles[i].volume; avgVol /= total;
-            const relVol = (c0.volume / (avgVol || 1)).toFixed(2);
-            document.getElementById("liq-relvol").textContent = `${relVol}x`;
-
-            // FVG ENGINE
-            let fvgState = "Balanced Zone"; let fvgRangeText = "--";
-            if (c3.high < c1.low) { fvgState = "Bullish Imbalance"; fvgRangeText = `${c3.high.toFixed(digits)} - ${c1.low.toFixed(digits)}`; document.getElementById("liq-fvg").className = "font-bold text-emerald-400"; }
-            else if (c3.low > c1.high) { fvgState = "Bearish Imbalance"; fvgRangeText = `${c1.high.toFixed(digits)} - ${c3.low.toFixed(digits)}`; document.getElementById("liq-fvg").className = "font-bold text-red-400"; }
-            else { document.getElementById("liq-fvg").className = "font-bold text-gray-400"; }
-            document.getElementById("liq-fvg").textContent = fvgState; document.getElementById("liq-fvg-range").textContent = fvgRangeText;
-
-            // ORDER BLOCK ENGINE
-            let highSwing = Math.max(c1.high, c2.high, c3.high); let lowSwing = Math.min(c1.low, c2.low, c3.low);
-            document.getElementById("ob-supply").textContent = highSwing.toFixed(digits); document.getElementById("ob-demand").textContent = lowSwing.toFixed(digits);
-            document.getElementById("ms-swing").textContent = `${lowSwing.toFixed(digits)} / ${highSwing.toFixed(digits)}`;
-
-            // MARKET STRUCTURE ENGINE
-            let structure = "Consolidating"; let mss = "No Break"; let bias = "Neutral";
-            if (c0.close > highSwing) { structure = "Bullish Expansion"; mss = "MSS Bullish (CHoCH)"; bias = "Institutional Long"; document.getElementById("ms-structure").className = "font-bold text-emerald-400"; }
-            else if (c0.close < lowSwing) { structure = "Bearish Expansion"; mss = "MSS Bearish (CHoCH)"; bias = "Institutional Short"; document.getElementById("ms-structure").className = "font-bold text-red-400"; }
-
-            document.getElementById("ms-structure").textContent = structure; document.getElementById("ms-mss").textContent = mss; document.getElementById("ms-trend").textContent = bias;
-            document.getElementById("ob-valid").textContent = "Yes (Verified)"; document.getElementById("ob-last").textContent = new Date().toLocaleTimeString();
-
-            // RENDER CONFLUENCE LOGIC TO THE MAIN STATION
-            compileMasterConfluenceSignal(structure, fvgState, c0.close, highSwing, lowSwing, parseFloat(relVol));
-
-            executeMultiTimeframeForecast(structure, fvgState, c0.close, highSwing, lowSwing);
-        }
-
-        // LOGIC PENYATUAN SIGNAL BUY / SELL DARI SEMUA ANALISA
-        function compileMasterConfluenceSignal(structure, fvg, currentPrice, highOB, lowOB, volumeRatio) {
-            let score = 0;
-            let buyFactors = 0;
-            let sellFactors = 0;
-            const digits = currentSymbol.includes("BTC") ? 2 : 5;
-
-            // 1. Cek Market Structure Expansion
-            if (structure.includes("Bullish")) { buyFactors++; document.getElementById("chk-structure").innerHTML = "🟢 Bullish Bias"; document.getElementById("chk-structure").className = "text-emerald-400 font-bold"; }
-            else if (structure.includes("Bearish")) { sellFactors++; document.getElementById("chk-structure").innerHTML = "🔴 Bearish Bias"; document.getElementById("chk-structure").className = "text-red-400 font-bold"; }
-            else { document.getElementById("chk-structure").innerHTML = "⚪ Consolidate"; document.getElementById("chk-structure").className = "text-gray-400 font-bold"; }
-
-            // 2. Cek FVG Imbalance Pool
-            if (fvg.includes("Bullish")) { buyFactors++; document.getElementById("chk-fvg").innerHTML = "🟢 Bullish FVG"; document.getElementById("chk-fvg").className = "text-emerald-400 font-bold"; }
-            else if (fvg.includes("Bearish")) { sellFactors++; document.getElementById("chk-fvg").innerHTML = "🔴 Bearish FVG"; document.getElementById("chk-fvg").className = "text-red-400 font-bold"; }
-            else { document.getElementById("chk-fvg").innerHTML = "⚪ Balanced"; document.getElementById("chk-fvg").className = "text-gray-400 font-bold"; }
-
-            // 3. Cek Kedekatan Harga dengan Order Block (Mitigation)
-            const rangeOB = highOB - lowOB;
-            const proximityToDemand = (currentPrice - lowOB) / (rangeOB || 1);
-            if (proximityToDemand <= 0.3) { buyFactors++; document.getElementById("chk-ob").innerHTML = "🟢 Demand Rest"; document.getElementById("chk-ob").className = "text-emerald-400 font-bold"; }
-            else if (proximityToDemand >= 0.7) { sellFactors++; document.getElementById("chk-ob").innerHTML = "🔴 Supply Rest"; document.getElementById("chk-ob").className = "text-red-400 font-bold"; }
-            else { document.getElementById("chk-ob").innerHTML = "⚪ Equilibrium"; document.getElementById("chk-ob").className = "text-gray-400 font-bold"; }
-
-            // 4. Cek Lonjakan Volume Institusi
-            if (volumeRatio >= 1.2) { 
-                if (structure.includes("Bullish") || fvg.includes("Bullish")) buyFactors++;
-                if (structure.includes("Bearish") || fvg.includes("Bearish")) sellFactors++;
-                document.getElementById("chk-vol").innerHTML = "🔥 High Volume"; document.getElementById("chk-vol").className = "text-blue-400 font-bold"; 
-            } else { 
-                document.getElementById("chk-vol").innerHTML = "⚪ Low Volume"; document.getElementById("chk-vol").className = "text-gray-500 font-bold"; 
-            }
-
-            // Hitung Score Akhir Kesimpulan Sinyal
-            const totalSignals = buyFactors + sellFactors;
-            let finalDecision = "WAIT";
-            let containerStyle = "border border-slate-800 bg-slate-950";
-            let actionStyle = "text-gray-500";
-            let reasonText = "Menunggu konformasi korelasi indikator...";
-
-            if (buyFactors >= 2 && buyFactors > sellFactors) {
-                score = Math.floor((buyFactors / 4) * 100);
-                finalDecision = "STRONG BUY";
-                containerStyle = "border-2 border-emerald-500 bg-emerald-950/30 shadow-[0_0_20px_rgba(16,185,129,0.2)]";
-                actionStyle = "text-emerald-400 font-black animate-pulse";
-                reasonText = "Struktur & FVG mendukung akumulasi institusional.";
-
-                // Kalkulasi SL dan TP Otomatis untuk Posisi Buy
-                document.getElementById("param-action").textContent = "LONG ENTRY";
-                document.getElementById("param-action").className = "text-emerald-400 font-bold";
-                document.getElementById("param-entry").textContent = currentPrice.toFixed(digits);
-                document.getElementById("param-sl").textContent = (lowOB - (rangeOB * 0.1)).toFixed(digits); // SL di bawah Demand OB
-                document.getElementById("param-tp").textContent = (highOB + (rangeOB * 1.5)).toFixed(digits); // TP 1:1.5 RR minimal
-            } 
-            else if (sellFactors >= 2 && sellFactors > buyFactors) {
-                score = Math.floor((sellFactors / 4) * 100);
-                finalDecision = "STRONG SELL";
-                containerStyle = "border-2 border-red-500 bg-red-950/30 shadow-[0_0_20px_rgba(239,68,68,0.2)]";
-                actionStyle = "text-red-400 font-black animate-pulse";
-                reasonText = "Struktur & FVG mendukung distribusi institusional.";
-
-                // Kalkulasi SL dan TP Otomatis untuk Posisi Sell
-                document.getElementById("param-action").textContent = "SHORT ENTRY";
-                document.getElementById("param-action").className = "text-red-400 font-bold";
-                document.getElementById("param-entry").textContent = currentPrice.toFixed(digits);
-                document.getElementById("param-sl").textContent = (highOB + (rangeOB * 0.1)).toFixed(digits); // SL di atas Supply OB
-                document.getElementById("param-tp").textContent = (lowOB - (rangeOB * 1.5)).toFixed(digits);
-            } 
-            else {
-                score = 0;
-                document.getElementById("param-action").textContent = "STANDBY";
-                document.getElementById("param-action").className = "text-gray-500 font-bold";
-                document.getElementById("param-entry").textContent = "--";
-                document.getElementById("param-sl").textContent = "--";
-                document.getElementById("param-tp").textContent = "--";
-            }
-
-            // Update Tampilan DOM Visual Box Sinyal Utama
-            document.getElementById("signalScore").textContent = `${score}%`;
-            document.getElementById("signalAction").textContent = finalDecision;
-            document.getElementById("signalAction").className = `text-3xl font-black tracking-widest ${actionStyle}`;
-            document.getElementById("signalContainer").className = `rounded-2xl p-5 flex flex-col justify-center items-center text-center transition-all duration-300 ${containerStyle}`;
-            document.getElementById("signalReason").textContent = reasonText;
-        }
-
-        function executeMultiTimeframeForecast(structure, fvg, closePrice, high, low) {
-            const range = high - low; const position = (closePrice - low) / (range || 1);
-            const tfs = ["1m", "5m", "15m", "1h", "4h", "1d", "1w", "1mn"];
-            
-            tfs.forEach((tf, idx) => {
-                let signal = "WAIT"; let description = "Equilibrium Range"; let style = "bg-slate-900 text-gray-500";
-                let weight = position + (Math.sin(idx + Date.now()/60000) * 0.12);
-
-                if (structure.includes("Bullish") || fvg.includes("Bullish")) {
-                    if (weight < 0.45) { signal = "BUY"; description = "Mitigation Array Hunt"; style = "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"; }
-                    else { signal = "HOLD BUY"; description = "Orderflow Continuation"; style = "bg-emerald-600/10 text-emerald-300"; }
-                } else if (structure.includes("Bearish") || fvg.includes("Bearish")) {
-                    if (weight > 0.55) { signal = "SELL"; description = "Premium Array Rebound"; style = "bg-red-500/20 text-red-400 border border-red-500/30"; }
-                    else { signal = "HOLD BEAR"; description = "Liquidity Run Expansion"; style = "bg-red-600/10 text-red-300"; }
-                }
-
-                document.getElementById(`tf-${tf}`).textContent = signal;
-                document.getElementById(`tf-${tf}`).className = `px-2.5 py-1 rounded-md text-[10px] font-black ${style}`;
-                document.getElementById(`analysis-${tf}`).textContent = description;
-
-                if (tf === "15m" && (signal === "BUY" || signal === "SELL")) {
-                    if (lastSentSignal !== signal) {
-                        playSignalSound(signal);
-                        dispatchTelegramSignal(signal, closePrice, fvg, structure);
-                        lastSentSignal = signal;
-                    }
-                } else if (tf === "15m" && signal === "WAIT") { lastSentSignal = ""; }
-            });
-        }
-
-        function dispatchTelegramSignal(action, price, imbalance, structureState) {
-            const tbody = document.getElementById("historyBody"); const digits = currentSymbol.includes("BTC") ? 2 : 5;
-            if (tbody.innerHTML.includes("Menunggu data")) tbody.innerHTML = "";
-            const tr = document.createElement("tr"); tr.className = "hover:bg-slate-900 transition text-xs border-b border-slate-900";
-            tr.innerHTML = `<td class="py-3 font-mono text-gray-500">${new Date().toLocaleTimeString()}</td><td class="py-3 font-bold text-white">${currentSymbol}</td><td class="py-3 font-black ${action === 'BUY' ? 'text-emerald-400' : 'text-red-400'}">${action}</td><td class="py-3 text-gray-400">${structureState}</td><td class="py-3 font-mono text-slate-400">${imbalance}</td>`;
-            tbody.insertBefore(tr, tbody.firstChild);
-
-            if (!settings.telegram || !settings.botToken || !settings.chatId) return;
-            const textMsg = `⚡ *SMC QUANT ALGO PRO ALERT* ⚡\n\n• *Pair:* ${currentSymbol}\n• *Action Sinyal:* ${action === 'BUY' ? '🟢 BUY ENTRY' : '🔴 SELL ENTRY'}\n• *Harga Trigger:* ${price.toFixed(digits)}\n• *Market Structure:* ${structureState}\n• *Status FVG:* ${imbalance}\n• *Waktu Server:* ${new Date().toLocaleTimeString()}`;
-            fetch(`https://api.telegram.org/bot${settings.botToken}/sendMessage`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat_id: settings.chatId, text: textMsg, parse_mode: "Markdown" }) }).catch(e => console.error(e));
-        }
-
-        function changeSymbol(symbol, element) {
-            currentSymbol = symbol; document.getElementById("chartTitle").innerHTML = `${symbol} <span class="text-emerald-400">• Candlestick Chart</span>`;
-            document.querySelectorAll(".symbol-btn").forEach(btn => btn.classList.remove("active")); element.classList.add("active");
-            candles = []; currentCandle = null; lastSentSignal = ""; 
-            calculateLotSize(); initTradingViewChart(); startPipeline();
+            alert("Konfigurasi tersimpan!");
         }
 
         window.onload = function() {
-            loadSettings(); initTradingViewChart(); startPipeline(); calculateLotSize();
-            const newsList = ["FED notes high-impact liquidity zones ahead of session open.", "ECB stabilization array matrix forming inside discount pools.", "Algorithmic market makers building thick blocks under consolidation."];
-            document.getElementById("news-headline").textContent = `"${newsList[Math.floor(Math.random() * newsList.length)]}"`;
+            initChart();
+            connectMarketData();
         };
     </script>
 </body>
