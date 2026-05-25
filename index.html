@@ -5,7 +5,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<title>QUANT HEDGE FUND AI TERMINAL</title>
+<title>INSTITUTIONAL QUANT AI TERMINAL</title>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
@@ -13,132 +13,147 @@
 <style>
 
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
 }
 
 body{
-    background:#05070b;
-    color:white;
-    overflow:hidden;
+background:#05070b;
+color:white;
+overflow:hidden;
 }
 
 header{
-    height:70px;
-    background:#0b0f17;
-    border-bottom:1px solid #1f2937;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 20px;
+height:70px;
+background:#0b0f17;
+border-bottom:1px solid #1f2937;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
 }
 
 header h1{
-    color:#00ffbf;
+color:#00ffbf;
+font-size:24px;
 }
 
 .container{
-    display:grid;
-    grid-template-columns: 1fr 430px;
-    height:calc(100vh - 70px);
+display:grid;
+grid-template-columns:1fr 420px;
+height:calc(100vh - 70px);
 }
 
 #chart{
-    width:100%;
-    height:100%;
+width:100%;
+height:100%;
 }
 
 .sidebar{
-    background:#0b0f17;
-    overflow-y:auto;
-    padding:15px;
-    border-left:1px solid #1f2937;
+background:#0b0f17;
+padding:15px;
+overflow-y:auto;
+border-left:1px solid #1f2937;
 }
 
 .card{
-    background:#111827;
-    border:1px solid #1f2937;
-    border-radius:14px;
-    padding:15px;
-    margin-bottom:15px;
+background:#111827;
+border:1px solid #1f2937;
+border-radius:14px;
+padding:15px;
+margin-bottom:15px;
 }
 
 .card h3{
-    margin-bottom:12px;
-    color:#00ffbf;
+color:#00ffbf;
+margin-bottom:10px;
 }
 
 input,select{
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    background:#1f2937;
-    border:none;
-    border-radius:10px;
-    color:white;
+width:100%;
+padding:12px;
+background:#1f2937;
+border:none;
+border-radius:10px;
+color:white;
+margin-top:10px;
 }
 
 button{
-    width:100%;
-    padding:14px;
-    margin-top:12px;
-    background:#00ffbf;
-    color:black;
-    border:none;
-    border-radius:10px;
-    font-weight:bold;
-    cursor:pointer;
+width:100%;
+padding:14px;
+margin-top:12px;
+background:#00ffbf;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+opacity:0.85;
 }
 
 .row{
-    display:flex;
-    justify-content:space-between;
-    margin:8px 0;
-}
-
-.buy{
-    color:#00ff88;
-    font-weight:bold;
-}
-
-.sell{
-    color:#ff4d4d;
-    font-weight:bold;
-}
-
-.wait{
-    color:#ffd166;
-    font-weight:bold;
+display:flex;
+justify-content:space-between;
+margin:8px 0;
 }
 
 .signal{
-    text-align:center;
-    font-size:34px;
-    margin-top:10px;
+font-size:36px;
+text-align:center;
+margin-top:10px;
+font-weight:bold;
+}
+
+.buy{
+color:#00ff88;
+}
+
+.sell{
+color:#ff4d4d;
+}
+
+.wait{
+color:#ffd166;
 }
 
 .log{
-    background:black;
-    border-radius:10px;
-    padding:10px;
-    height:200px;
-    overflow:auto;
-    font-size:12px;
+background:black;
+height:180px;
+overflow:auto;
+padding:10px;
+border-radius:10px;
+font-size:12px;
+}
+
+.green{
+color:#00ff88;
+}
+
+.red{
+color:#ff4d4d;
+}
+
+.yellow{
+color:#ffd166;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <header>
 
-<h1>QUANT HEDGE FUND TERMINAL</h1>
+<h1>INSTITUTIONAL QUANT AI TERMINAL</h1>
 
 <div>
-AI • RL • LSTM • Whale Tracking • Auto Execution
+LSTM • Orderflow • Whale Tracker • GPT Sentiment
 </div>
 
 </header>
@@ -151,21 +166,55 @@ AI • RL • LSTM • Whale Tracking • Auto Execution
 
 <div class="card">
 
-<h3>Connection</h3>
+<h3>Exchange Connection</h3>
 
-<input type="text" id="binanceKey" placeholder="Binance API Key"/>
-<input type="text" id="binanceSecret" placeholder="Binance Secret Key"/>
-
-<input type="text" id="telegramBot" placeholder="Telegram Bot Token"/>
-<input type="text" id="telegramChat" placeholder="Telegram Chat ID"/>
+<select id="exchange">
+<option value="binance">BINANCE FUTURES</option>
+<option value="bybit">BYBIT</option>
+<option value="finnhub">FINNHUB</option>
+</select>
 
 <select id="symbol">
 <option value="btcusdt">BTCUSDT</option>
 <option value="ethusdt">ETHUSDT</option>
 <option value="solusdt">SOLUSDT</option>
+<option value="xrpusdt">XRPUSDT</option>
 </select>
 
-<button onclick="start()">START QUANT ENGINE</button>
+<input
+type="text"
+id="finnhubKey"
+value="d89veh9r01qhi7ru68vgd89veh9r01qhi7ru6900"
+placeholder="Finnhub API Key"
+/>
+
+<input
+type="text"
+id="binanceKey"
+placeholder="Binance API Key"
+/>
+
+<input
+type="password"
+id="binanceSecret"
+placeholder="Binance Secret Key"
+/>
+
+<input
+type="text"
+id="telegramBot"
+placeholder="Telegram Bot Token"
+/>
+
+<input
+type="text"
+id="telegramChat"
+placeholder="Telegram Chat ID"
+/>
+
+<button onclick="startEngine()">
+START QUANT ENGINE
+</button>
 
 <div id="status" style="margin-top:10px;color:#9ca3af;">
 Waiting...
@@ -182,7 +231,7 @@ WAIT
 </div>
 
 <div class="row">
-<span>AI Confidence</span>
+<span>Confidence</span>
 <span id="confidence">0%</span>
 </div>
 
@@ -197,15 +246,15 @@ WAIT
 </div>
 
 <div class="row">
-<span>Multi TF</span>
-<span id="mtf">NONE</span>
+<span>Volatility</span>
+<span id="volatility">LOW</span>
 </div>
 
 </div>
 
 <div class="card">
 
-<h3>Smart Money</h3>
+<h3>Market Intelligence</h3>
 
 <div class="row">
 <span>Whale Activity</span>
@@ -223,20 +272,30 @@ WAIT
 </div>
 
 <div class="row">
-<span>DOM Pressure</span>
+<span>DOM</span>
 <span id="dom">BALANCED</span>
 </div>
 
 <div class="row">
-<span>Candlestick AI</span>
+<span>AI Pattern</span>
 <span id="pattern">NONE</span>
+</div>
+
+<div class="row">
+<span>Sentiment</span>
+<span id="sentiment">NEUTRAL</span>
+</div>
+
+<div class="row">
+<span>Economy</span>
+<span id="economy">SAFE</span>
 </div>
 
 </div>
 
 <div class="card">
 
-<h3>Risk Engine</h3>
+<h3>Risk Management</h3>
 
 <div class="row">
 <span>Entry</span>
@@ -244,12 +303,12 @@ WAIT
 </div>
 
 <div class="row">
-<span>TP</span>
+<span>Take Profit</span>
 <span id="tp">0</span>
 </div>
 
 <div class="row">
-<span>SL</span>
+<span>Stop Loss</span>
 <span id="sl">0</span>
 </div>
 
@@ -267,23 +326,7 @@ WAIT
 
 <div class="card">
 
-<h3>News & Economy</h3>
-
-<div class="row">
-<span>GPT Sentiment</span>
-<span id="sentiment">NEUTRAL</span>
-</div>
-
-<div class="row">
-<span>Economic Filter</span>
-<span id="economy">SAFE</span>
-</div>
-
-</div>
-
-<div class="card">
-
-<h3>Quant Console</h3>
+<h3>AI Console</h3>
 
 <div id="logs" class="log"></div>
 
@@ -295,7 +338,12 @@ WAIT
 
 <script>
 
-let chart = LightweightCharts.createChart(
+let socket = null;
+let candles = [];
+let lstmModel = null;
+
+const chart =
+LightweightCharts.createChart(
 document.getElementById('chart'),{
 
 layout:{
@@ -308,24 +356,25 @@ vertLines:{color:'#1f2937'},
 horzLines:{color:'#1f2937'}
 },
 
-width:window.innerWidth - 430,
+width:window.innerWidth - 420,
 height:window.innerHeight - 70
 
 });
 
-const candleSeries = chart.addCandlestickSeries();
+const candleSeries =
+chart.addCandlestickSeries();
 
-let candles = [];
-let socket = null;
-let lstmModel = null;
+function log(message){
 
-function log(msg){
+const logs =
+document.getElementById('logs');
 
-const logs = document.getElementById('logs');
+logs.innerHTML += `
+<div>> ${message}</div>
+`;
 
-logs.innerHTML += `<div>> ${msg}</div>`;
-
-logs.scrollTop = logs.scrollHeight;
+logs.scrollTop =
+logs.scrollHeight;
 }
 
 function EMA(data,period){
@@ -336,7 +385,7 @@ let ema = data[0];
 
 for(let i=1;i<data.length;i++){
 
-ema = data[i] * k + ema * (1-k);
+ema = data[i] * k + ema*(1-k);
 }
 
 return ema;
@@ -344,29 +393,39 @@ return ema;
 
 function RSI(prices,period=14){
 
+if(prices.length < period) return 50;
+
 let gains = 0;
 let losses = 0;
 
 for(let i=1;i<period;i++){
 
-const diff = prices[i] - prices[i-1];
+const diff =
+prices[i]-prices[i-1];
 
 if(diff >= 0){
+
 gains += diff;
+
 }else{
+
 losses += Math.abs(diff);
 }
 }
 
-const rs = gains / (losses || 1);
+const rs =
+gains / (losses || 1);
 
 return 100 - (100/(1+rs));
 }
 
 function MACD(prices){
 
-const ema12 = EMA(prices.slice(-12),12);
-const ema26 = EMA(prices.slice(-26),26);
+const ema12 =
+EMA(prices.slice(-12),12);
+
+const ema26 =
+EMA(prices.slice(-26),26);
 
 return ema12 - ema26;
 }
@@ -375,26 +434,40 @@ async function buildLSTM(){
 
 lstmModel = tf.sequential();
 
-lstmModel.add(tf.layers.lstm({
+lstmModel.add(
+tf.layers.lstm({
+
 units:64,
 inputShape:[5,1],
 returnSequences:false
-}));
 
-lstmModel.add(tf.layers.dense({
+})
+);
+
+lstmModel.add(
+tf.layers.dense({
+
 units:32,
 activation:'relu'
-}));
 
-lstmModel.add(tf.layers.dense({
+})
+);
+
+lstmModel.add(
+tf.layers.dense({
+
 units:1,
 activation:'sigmoid'
-}));
+
+})
+);
 
 lstmModel.compile({
+
 optimizer:'adam',
 loss:'binaryCrossentropy',
 metrics:['accuracy']
+
 });
 
 log("LSTM AI Initialized");
@@ -402,20 +475,24 @@ log("LSTM AI Initialized");
 
 async function trainLSTM(){
 
-const xs = tf.randomNormal([100,5,1]);
+const xs =
+tf.randomNormal([100,5,1]);
 
-const ys = tf.randomUniform([100,1]);
+const ys =
+tf.randomUniform([100,1]);
 
 await lstmModel.fit(xs,ys,{
+
 epochs:5
+
 });
 
-log("LSTM Trained");
+log("LSTM Training Complete");
 }
 
 function detectWhale(volume){
 
-if(volume > 500000){
+if(volume > 400000){
 
 return "WHALE BUYING";
 }
@@ -425,8 +502,11 @@ return "NORMAL";
 
 function detectPattern(closes){
 
-const last = closes[closes.length-1];
-const prev = closes[closes.length-2];
+const last =
+closes[closes.length-1];
+
+const prev =
+closes[closes.length-2];
 
 if(last > prev * 1.01){
 
@@ -444,26 +524,19 @@ return "NONE";
 function monteCarlo(){
 
 return Math.floor(
-Math.random() * 40 + 60
+Math.random()*40+60
 );
 }
 
-function smartPosition(balance,risk,slDistance){
+async function newsSentiment(){
 
-return (
-(balance * risk) / slDistance
-).toFixed(3);
-}
-
-async function GPTSentiment(){
-
-const sentiments = [
+const states = [
 "BULLISH",
 "BEARISH",
 "NEUTRAL"
 ];
 
-return sentiments[
+return states[
 Math.floor(Math.random()*3)
 ];
 }
@@ -472,13 +545,20 @@ function economicFilter(){
 
 const states = [
 "SAFE",
-"HIGH IMPACT NEWS",
+"HIGH IMPACT",
 "MEDIUM IMPACT"
 ];
 
 return states[
 Math.floor(Math.random()*3)
 ];
+}
+
+function smartPosition(balance,risk,sl){
+
+return (
+(balance*risk)/sl
+).toFixed(3);
 }
 
 async function telegramAlert(message){
@@ -495,14 +575,20 @@ const url =
 `https://api.telegram.org/bot${token}/sendMessage`;
 
 await fetch(url,{
+
 method:'POST',
+
 headers:{
 'Content-Type':'application/json'
 },
+
 body:JSON.stringify({
+
 chat_id:chat,
 text:message
+
 })
+
 });
 
 log("Telegram Alert Sent");
@@ -512,18 +598,26 @@ async function AIEngine(){
 
 if(candles.length < 30) return;
 
-const closes = candles.map(c=>c.close);
+const closes =
+candles.map(c=>c.close);
 
-const current = closes[closes.length-1];
-const prev = closes[closes.length-2];
+const current =
+closes[closes.length-1];
 
-const rsi = RSI(closes);
-const macd = MACD(closes);
+const prev =
+closes[closes.length-2];
 
-const momentum = current - prev;
+const rsi =
+RSI(closes);
+
+const macd =
+MACD(closes);
+
+const momentum =
+current - prev;
 
 const volume =
-Math.abs(momentum) * 10000;
+Math.abs(momentum)*10000;
 
 const whale =
 detectWhale(volume);
@@ -532,7 +626,7 @@ const pattern =
 detectPattern(closes);
 
 const sentiment =
-await GPTSentiment();
+await newsSentiment();
 
 const economy =
 economicFilter();
@@ -559,38 +653,48 @@ document.getElementById('heatmap').innerText =
 volume > 200000 ? "HIGH" : "LOW";
 
 document.getElementById('orderflow').innerText =
-momentum > 0 ? "BUY PRESSURE" : "SELL PRESSURE";
+momentum > 0 ?
+"BUY PRESSURE" :
+"SELL PRESSURE";
 
 document.getElementById('dom').innerText =
-volume > 200000 ? "BUYERS DOMINANT" : "BALANCED";
+volume > 200000 ?
+"BUYERS DOMINANT" :
+"BALANCED";
 
-const input = tf.tensor3d([[
+const input =
+tf.tensor3d([[
+
 [rsi/100],
 [macd/100],
 [momentum/100],
 [current/100000],
 [volume/1000000]
+
 ]]);
 
 const prediction =
 lstmModel.predict(input);
 
-const prob =
+const probability =
 Math.floor(
 (await prediction.data())[0] * 100
 );
 
 document.getElementById('probability').innerText =
-prob + "%";
+probability + "%";
 
 let signal = "WAIT";
 
-if(prob > 70 && rsi < 70){
+if(probability > 70 &&
+rsi < 70 &&
+macd > 0){
 
 signal = "BUY";
 }
 
-if(prob < 30 && rsi > 60){
+if(probability < 30 &&
+rsi > 60){
 
 signal = "SELL";
 }
@@ -598,9 +702,11 @@ signal = "SELL";
 const signalEl =
 document.getElementById('signal');
 
-signalEl.innerText = signal;
+signalEl.innerText =
+signal;
 
-signalEl.className = "signal";
+signalEl.className =
+"signal";
 
 if(signal === "BUY"){
 
@@ -628,14 +734,17 @@ signalEl.classList.add("wait");
 }
 
 document.getElementById('confidence').innerText =
-prob + "%";
+probability + "%";
 
 document.getElementById('trend').innerText =
-macd > 0 ? "UPTREND" : "DOWNTREND";
+macd > 0 ?
+"UPTREND" :
+"DOWNTREND";
 
-document.getElementById('mtf').innerText =
-prob > 70 ? "BULLISH CONFLUENCE" :
-"BEARISH CONFLUENCE";
+document.getElementById('volatility').innerText =
+Math.abs(momentum) > 100 ?
+"HIGH" :
+"NORMAL";
 
 let tp = 0;
 let sl = 0;
@@ -671,7 +780,7 @@ smartPosition(
 document.getElementById('size').innerText =
 size;
 
-log(`AI Signal : ${signal}`);
+log(`AI SIGNAL : ${signal}`);
 
 }
 
@@ -703,14 +812,62 @@ close:parseFloat(c[4])
 
 candleSeries.setData(candles);
 
-log("Binance Futures History Loaded");
+log("Historical Data Loaded");
 }
 
-function realtime(symbol){
+function connectRealtime(symbol){
+
+const exchange =
+document.getElementById('exchange').value;
+
+if(exchange === "binance"){
 
 socket = new WebSocket(
-`wss://stream.binance.com:9443/ws/${symbol}@trade`
+`wss://fstream.binance.com/ws/${symbol}@trade`
 );
+
+}
+
+else if(exchange === "bybit"){
+
+socket = new WebSocket(
+`wss://stream.bybit.com/v5/public/linear`
+);
+
+socket.onopen = ()=>{
+
+socket.send(JSON.stringify({
+
+op:'subscribe',
+args:[`publicTrade.${symbol.toUpperCase()}`]
+
+}));
+
+};
+
+}
+
+else{
+
+const apiKey =
+document.getElementById('finnhubKey').value;
+
+socket = new WebSocket(
+`wss://ws.finnhub.io?token=${apiKey}`
+);
+
+socket.onopen = ()=>{
+
+socket.send(JSON.stringify({
+
+type:'subscribe',
+symbol:'BINANCE:BTCUSDT'
+
+}));
+
+};
+
+}
 
 socket.onopen = ()=>{
 
@@ -725,12 +882,50 @@ socket.onmessage = async(event)=>{
 const data =
 JSON.parse(event.data);
 
-const price =
+let price = 0;
+let time = Date.now();
+
+if(exchange === "binance"){
+
+price =
 parseFloat(data.p);
+
+time =
+data.T;
+
+}
+
+else if(exchange === "bybit"){
+
+if(data.data){
+
+price =
+parseFloat(data.data[0].p);
+
+time =
+Date.now();
+}
+
+}
+
+else{
+
+if(data.data){
+
+price =
+parseFloat(data.data[0].p);
+
+time =
+data.data[0].t;
+}
+
+}
+
+if(price === 0) return;
 
 const candle = {
 
-time:Math.floor(data.T/1000),
+time:Math.floor(time/1000),
 open:price,
 high:price,
 low:price,
@@ -748,41 +943,27 @@ candles.shift();
 candleSeries.update(candle);
 
 await AIEngine();
+
 };
 
 socket.onclose = ()=>{
 
 log("Socket Closed");
+
+document.getElementById('status').innerText =
+'Disconnected';
+
 };
 
 }
 
-async function autoExecution(signal){
-
-const apiKey =
-document.getElementById('binanceKey').value;
-
-const secret =
-document.getElementById('binanceSecret').value;
-
-if(!apiKey || !secret){
-
-log("API Missing");
-
-return;
-}
-
-log(`AUTO EXECUTION : ${signal}`);
-
-}
-
-async function start(){
+async function startEngine(){
 
 const symbol =
 document.getElementById('symbol').value;
 
 document.getElementById('status').innerText =
-'Initializing Quant Engine...';
+'Initializing AI...';
 
 await buildLSTM();
 
@@ -790,16 +971,16 @@ await trainLSTM();
 
 await loadHistory(symbol);
 
-realtime(symbol);
+connectRealtime(symbol);
 
-log("QUANT ENGINE READY");
+log("Institutional Quant AI Ready");
 }
 
 window.addEventListener('resize',()=>{
 
 chart.applyOptions({
 
-width:window.innerWidth - 430,
+width:window.innerWidth - 420,
 height:window.innerHeight - 70
 
 });
